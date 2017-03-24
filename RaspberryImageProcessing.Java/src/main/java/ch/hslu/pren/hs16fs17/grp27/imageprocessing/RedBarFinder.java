@@ -1,6 +1,6 @@
 package ch.hslu.pren.hs16fs17.grp27.imageprocessing;
 
-import ch.hslu.pren.hs16fs17.grp27.helper.Image;
+import ch.hslu.pren.hs16fs17.grp27.imageprocessing.helper.Image;
 import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
 

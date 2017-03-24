@@ -1,4 +1,4 @@
-package ch.hslu.pren.hs16fs17.grp27.helper;
+package ch.hslu.pren.hs16fs17.grp27.imageprocessing.helper;
 
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;

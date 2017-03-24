@@ -27,6 +27,7 @@ public class MatToBufImg {
     public MatToBufImg(Mat amatrix, String fileExt) {
         matrix = amatrix;
         fileExten = fileExt;
+        mob = new MatOfByte();
     }
 
     public void setMatrix(Mat amatrix, String fileExt) {

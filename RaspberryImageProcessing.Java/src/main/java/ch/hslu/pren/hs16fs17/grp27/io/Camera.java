@@ -24,5 +24,8 @@ public class Camera {
         return captureImageMat;
     }
 
+    public void Shutdown() {
+        capture.release();
+    }
 }
 
