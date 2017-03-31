@@ -13,4 +13,9 @@ public class Configuration {
 
     public static final Pin STARTSIGNALPIN = RaspiPin.GPIO_01;
 
+
+    public static final Pin BIT1SIGNALPIN = RaspiPin.GPIO_02;
+    public static final Pin BIT2SIGNALPIN = RaspiPin.GPIO_03;
+    public static final Pin BIT3SIGNALPIN = RaspiPin.GPIO_04;
+
 }

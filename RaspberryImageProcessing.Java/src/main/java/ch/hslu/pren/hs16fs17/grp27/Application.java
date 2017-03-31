@@ -10,12 +10,9 @@ import ch.hslu.pren.hs16fs17.grp27.settings.Configuration;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
-import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * Created by silvio on 17.03.17.
@@ -30,6 +27,8 @@ public class Application {
         RedBarFinder redBarFinder = new RedBarFinder();
         RomanCharacterFinder romanCharacterFinder = new RomanCharacterFinder();
         ArduinoCommunication communication = new ArduinoCommunication();
+
+        communication.ClearPinData();
 
         //Executor executor = new ThreadPoolExecutor(3, 100, );
 
@@ -66,30 +65,24 @@ public class Application {
 
         int trys = 0;
         boolean redBarFound = false;
-        while (intList.size() <= 10) {
+        while (processList.size() <= 10) {
             Mat capturedImage = sideCamera.Capture();
+            Image foundImage = redBarFinder.FindRedDoubleBar(capturedImage);
+            if (foundImage != null) {
+                System.out.println("Redbar found");
 
-            Future<Integer> numberRecognitionFuture = CompletableFuture.completedFuture(capturedImage)
-                    .thenApplyAsync(img -> {
-                        Image foundImage = redBarFinder.FindRedDoubleBar(img);
-                        if(foundImage != null) {
-                            System.out.println("Redbar found");
-                            return foundImage;
-                        }
-                        return null;
-                    })
-                    .thenApplyAsync(img -> img != null ? romanCharacterFinder.FindCharacter(img) : 0)
-                    .thenApplyAsync(i -> {
-                        if (i > 0)
-                            intList.add(i);
-                        return i;
-                    });
+                Future<Integer> numberRecognitionFuture = CompletableFuture.completedFuture(foundImage)
+                        .thenApplyAsync(img -> img != null ? romanCharacterFinder.FindCharacter(img) : 0)
+                        .thenApplyAsync(i -> {
+                            if (i > 0)
+                                intList.add(i);
+                            return i;
+                        });
 
-            processList.add(numberRecognitionFuture);
+                processList.add(numberRecognitionFuture);
 
-            trys++;
+            }
         }
-
 
         for (Future<Integer> future:
                 processList){
@@ -101,12 +94,96 @@ public class Application {
             }
         }
 
-        System.out.println("Hallo Welt");
+
+        Object[] objects =  processList.stream().map(f -> {
+            try {
+                int number = f.get();
+                number  = number == 6 ? 4 : number;
+                return number;
+            }
+            catch (Exception exc)
+            {
+                exc.printStackTrace();
+                return 0;
+            }
+        }).toArray();
+
+        Map<Integer, Long> numbers = new HashMap<>();
+        for (int i = 1; i <= 5; i++) {
+            final int currentEvaluationNumber = i;
+            long count = Arrays.stream(objects).filter(o -> (int) o == currentEvaluationNumber).count();
+            numbers.put(currentEvaluationNumber, count);
+        }
+
+        int maxKey = 1;
+        long maxNumbers = numbers.get(1);
+        for (int i = 2; i <= 5; i++) {
+            long currentCount = numbers.get(i);
+            if (maxNumbers < currentCount){
+                maxKey = i;
+                maxNumbers = currentCount;
+            }
+        }
+
+        PrintNumberInConsole(maxKey, maxNumbers, objects.length);
 
     }
 
     public static void SetUpEnvironment(){
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+    }
+
+    public static void PrintNumberInConsole(int number, long numbersFound, long totalAmountOfPicturesTaken){
+        switch(number){
+            case 1: System.out.println( " __  \n" +
+                    "|  | \n" +
+                    "|  | \n" +
+                    "|  | \n" +
+                    "|  | \n" +
+                    "|__| \n" +
+                    "     ");
+                break;
+
+            case 2: System.out.println( " __   __  \n" +
+                    "|  | |  | \n" +
+                    "|  | |  | \n" +
+                    "|  | |  | \n" +
+                    "|  | |  | \n" +
+                    "|__| |__| \n" +
+                    "          ");
+                break;
+
+            case 3: System.out.println( " __   __   __  \n" +
+                    "|  | |  | |  | \n" +
+                    "|  | |  | |  | \n" +
+                    "|  | |  | |  | \n" +
+                    "|  | |  | |  | \n" +
+                    "|__| |__| |__| \n" +
+                    "               ");
+                break;
+
+            case 4: System.out.println(" __  ____    ____ \n" +
+                    "|  | \\   \\  /   / \n" +
+                    "|  |  \\   \\/   /  \n" +
+                    "|  |   \\      /   \n" +
+                    "|  |    \\    /    \n" +
+                    "|__|     \\__/     \n" +
+                    "                  ");
+                break;
+
+            case 5: System.out.println( "____    ____ \n" +
+                    "\\   \\  /   / \n" +
+                    " \\   \\/   /  \n" +
+                    "  \\      /   \n" +
+                    "   \\    /    \n" +
+                    "    \\__/     \n" +
+                    "             ");
+                break;
+
+            default: System.out.println("Couldn't find Character");
+                break;
+        }
+        System.out.println("Precision: " + ((float)numbersFound/totalAmountOfPicturesTaken*100) + "%");
     }
 
 }
