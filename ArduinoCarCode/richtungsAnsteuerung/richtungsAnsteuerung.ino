@@ -5,6 +5,7 @@ boolean NACHHINTENGEKIPPT = false;
 boolean NACHVORNEGEKIPPT = false;
 boolean treppeUeberwunden = false;
 boolean VERSCHRAENKUNG = false;
+boolean KURVEEINLEITEN = false;
 
 
 
@@ -13,7 +14,7 @@ void setup() {
 
  
   motorSetup();
-  //ultraschallSetup();
+  ultraschallSetup();
      
 
 
@@ -83,6 +84,7 @@ void loop() {
 
             if(yaw>0)
             {
+            
               //Ab hier muss mit dem grössten Zustand begonnen werden
               if(yaw>160)
               {
@@ -110,7 +112,7 @@ void loop() {
                 
                   Serial.print("faehrt  nach rechts ");
                                  
-                    if(NACHVORNEGEKIPPT == false && NACHHINTENGEKIPPT == false)
+                    if(NACHVORNEGEKIPPT == false && NACHHINTENGEKIPPT == false && KURVEEINLEITEN == false)
                   {
                    faehrtNachRechts();
                   }
@@ -119,8 +121,12 @@ void loop() {
               else if(yaw >= 0)
               {
                 Serial.print("faehrt gerade aus ");
-                
+
+                if(KURVEEINLEITEN == false)
+                {
                faehrtGeradeAus();
+                }
+              
                     
                    
                
@@ -157,7 +163,7 @@ void loop() {
                 
 
                   
-                  if(NACHVORNEGEKIPPT == false && NACHHINTENGEKIPPT == false)
+                  if(NACHVORNEGEKIPPT == false && NACHHINTENGEKIPPT == false && KURVEEINLEITEN == false)
                   {
                                    
                   faehrtNachLinks();
@@ -171,8 +177,11 @@ void loop() {
               {
                 Serial.print("faehrt gerade aus ");
                 
-               
+                if(KURVEEINLEITEN == false)
+                {
                   faehrtGeradeAus();
+                 
+                }
                                                  // Achtung hier kann es vlt nicht funktionieren
               }
               Serial.print( yaw );
@@ -192,7 +201,7 @@ void loop() {
               
               
             }
-            else if(pitch < -20)
+            else if(pitch < -5)
             {
               Serial.print(" ,ist nach vorne gekippt ");
             nachVorneGekippt();
@@ -205,19 +214,33 @@ void loop() {
               NACHVORNEGEKIPPT = false;
               NACHHINTENGEKIPPT = false;
 
-              if(treppeUeberwunden == true && VERSCHRAENKUNG == true)
+              if(treppeUeberwunden == true )//&& VERSCHRAENKUNG == true)
               {
 
                 
-               // if(getDistanz()> 30)
-               // {
+                if(getDistanz()> 30 || KURVEEINLEITEN == true )
+                {
 
-                fahreKurveNachRechts();
+                if(yaw > -80)
+                {  
+                fahreKurveNachLinks();
+                
+                KURVEEINLEITEN = true;
+                 Serial.print("     Fahre Kurve !!!!!    ");
+                }
+                 else
+                {
+                   
+                KURVEEINLEITEN = false;
+                  stopMotor();
+                  Serial.print("     STOP MOTOR !!!!!    ");
+                }
+                
                   
-               // }
+                }
+               
                 
-               // Serial.print("     Fahre Kurve !!!!!    ");
-                
+               
                 
               }
 
@@ -254,8 +277,8 @@ void loop() {
 
 }
 
-/*int getYAW()
+int getYAW()
 {
   return (int)(ypr[0] * 180)/M_PI;
-}*/
+}
 

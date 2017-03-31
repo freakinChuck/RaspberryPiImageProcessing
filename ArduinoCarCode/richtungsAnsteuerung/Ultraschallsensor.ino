@@ -21,7 +21,7 @@
 #define trigPin 7 // Trigger Pin
 #define LEDPin 13 // Onboard LED
 
-int maximumRange = 200; // Maximum range needed
+int maximumRange = 105; // Maximum range needed
 int minimumRange = 0; // Minimum range needed
 long duration, distance; // Duration used to calculate distance
 
