@@ -20,16 +20,20 @@
 #define echoPin 6 // Echo Pin
 #define trigPin 7 // Trigger Pin
 #define LEDPin 13 // Onboard LED
+#define echoPin2 5
+#define trigPin2 4
 
 int maximumRange = 105; // Maximum range needed
 int minimumRange = 0; // Minimum range needed
-long duration, distance; // Duration used to calculate distance
+long duration, duration2,  distance,distance2; // Duration used to calculate distance
 
 void ultraschallSetup() {
   //Serial.begin (115200);
  pinMode(trigPin, OUTPUT);
  pinMode(echoPin, INPUT);
  pinMode(LEDPin, OUTPUT); // Use LED indicator (if required)
+  pinMode(trigPin2, OUTPUT);
+ pinMode(echoPin2, INPUT);
 
 }
 
@@ -60,12 +64,47 @@ int getDistanz() {
  Serial.println(distance);
  digitalWrite(LEDPin, LOW); 
  }
+}
+
+/*
+ 
+
+int getDistanz2() {
+
+ digitalWrite(trigPin2, LOW); 
+ delayMicroseconds(2); 
+
+ digitalWrite(trigPin2, HIGH);
+ delayMicroseconds(10); 
+ 
+ digitalWrite(trigPin2, LOW);
+ duration2 = pulseIn(echoPin2, HIGH);
+ 
+ //Calculate the distance (in cm) based on the speed of sound.
+ distance2 = duration2/58.2;
+ 
+ if (distance2 >= maximumRange || distance2 <= minimumRange){
+ 
+ Serial.println("-1");
+ digitalWrite(LEDPin, HIGH); 
+ }
+ else {
+ 
+ Serial.println(distance2);
+ digitalWrite(LEDPin, LOW); 
+ }
+ 
  
  //Delay 50ms before next reading.
  //delay(50);
 
-int distanz = (int)(distance);
- return distanz;
-}
+int distanz2 = (int)(distance2);
+ return distanz2;
+}*/
+
+
+
+
+
 
 

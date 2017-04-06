@@ -70,7 +70,7 @@ void nachHintenGekippt()
 
 void nachVorneGekippt()
 {
-                   analogWrite(in1, 20);
+                   analogWrite(in1, 50);
                    digitalWrite(in2,LOW);
                    analogWrite(in3, 20);
                    digitalWrite(in4, LOW);

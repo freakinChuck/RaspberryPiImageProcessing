@@ -7,6 +7,8 @@ boolean treppeUeberwunden = false;
 boolean VERSCHRAENKUNG = false;
 boolean KURVEEINLEITEN = false;
 
+boolean KURVEABGESCHLOSSEN = false;
+
 
 
 void setup() {
@@ -89,6 +91,8 @@ void loop() {
               if(yaw>160)
               {
                 Serial.print("faehrt in die entgegengesetzte Richtung ");
+                KURVEABGESCHLOSSEN = true;
+                 faehrtGeradeAus(); // if kurveeingeleitet == false ????
               }
               else if(yaw>140)
               {
@@ -107,7 +111,7 @@ void loop() {
               {
                  Serial.print("faehrt stark nach rechts ");
               }
-              else if(yaw >20) // war vorher auf 20
+              else if(yaw >10) // war vorher auf 20
               {
                 
                   Serial.print("faehrt  nach rechts ");
@@ -139,6 +143,8 @@ void loop() {
               if(yaw<-160)
               {
                 Serial.print("faehrt in die entgegengesetzte Richtung ");
+                 faehrtGeradeAus();
+                 KURVEABGESCHLOSSEN = true;
               }
               else if(yaw<-140)
               {
@@ -156,7 +162,7 @@ void loop() {
               {
                 Serial.print("faehrt stark nach links ");
               }
-              else if(yaw<-20) // war vorher auf 20
+              else if(yaw<-10) // war vorher auf 20
               {
                 Serial.print("faehrt  nach links ");
                  
@@ -228,12 +234,28 @@ void loop() {
                 KURVEEINLEITEN = true;
                  Serial.print("     Fahre Kurve !!!!!    ");
                 }
-                 else
+                 else 
                 {
+                  
+                  // if(getDistanz2() < 30){
                    
-                KURVEEINLEITEN = false;
-                  stopMotor();
-                  Serial.print("     STOP MOTOR !!!!!    ");
+                //KURVEEINLEITEN = false; //neu sind boolean und fahre gerade aus. Vorher war stopMotor()
+                faehrtGeradeAus();
+
+                 //  }
+                  // else
+                   //{
+                   // if(KURVEABGESCHLOSSEN == false)
+                   // {
+                    //  fahreKurveNachLinks();
+                   // }
+                  // }
+                   
+
+                
+                
+                }
+                }
                 }
                 
                   
@@ -242,10 +264,10 @@ void loop() {
                 
                
                 
-              }
+              
 
               
-            }
+           
             
             
             if(roll > 20)
