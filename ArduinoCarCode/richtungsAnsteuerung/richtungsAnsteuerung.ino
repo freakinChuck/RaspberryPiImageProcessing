@@ -6,6 +6,8 @@ boolean NACHVORNEGEKIPPT = false;
 boolean treppeUeberwunden = false;
 boolean VERSCHRAENKUNG = false;
 boolean KURVEEINLEITEN = false;
+boolean  HALBEKURVEABGESCHLOSSEN = false;
+boolean KURVEABGESCHLOSSEN = false;
 
 
 
@@ -89,6 +91,8 @@ void loop() {
               if(yaw>160)
               {
                 Serial.print("faehrt in die entgegengesetzte Richtung ");
+                KURVEABGESCHLOSSEN = true;
+                 faehrtGeradeAus();
               }
               else if(yaw>140)
               {
@@ -139,6 +143,8 @@ void loop() {
               if(yaw<-160)
               {
                 Serial.print("faehrt in die entgegengesetzte Richtung ");
+                KURVEABGESCHLOSSEN = true;
+                 faehrtGeradeAus();
               }
               else if(yaw<-140)
               {
@@ -228,13 +234,34 @@ void loop() {
                 KURVEEINLEITEN = true;
                  Serial.print("     Fahre Kurve !!!!!    ");
                 }
-                 else
+                 else 
                 {
                    
                 KURVEEINLEITEN = false;
-                  stopMotor();
-                  Serial.print("     STOP MOTOR !!!!!    ");
+                if(getDistanz2() <30){
+                  while(getDistanz2() < 30){
+                    faehrtGeradeAus();
+                    HALBEKURVEABGESCHLOSSEN = true;
+                    Serial.print("     Fahre Gerade aus !!!!!    ");
+                  }
+                }else if (KURVEABGESCHLOSSEN == false){
+                  fahreKurveNachLinks();
+                   Serial.print("     Kurve fertiiiiiiiiiiigggggg !!!!!    ");
+                  
+                  
+                  }
+                
+                  
                 }
+                
+                if( HALBEKURVEABGESCHLOSSEN == true)
+                {
+                  
+                }
+                
+
+
+                
                 
                   
                 }
@@ -242,7 +269,7 @@ void loop() {
                 
                
                 
-              }
+              } // Treppe Überwunden aktiviert
 
               
             }
