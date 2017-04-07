@@ -116,7 +116,7 @@ void loop() {
                 
                   Serial.print("faehrt  nach rechts ");
                                  
-                    if(NACHVORNEGEKIPPT == false && NACHHINTENGEKIPPT == false && KURVEEINLEITEN == false)
+                    if(NACHVORNEGEKIPPT == false && NACHHINTENGEKIPPT == false && KURVEEINLEITEN == false && KURVEABGESCHLOSSEN == false)
                   {
                    faehrtNachRechts();
                   }
@@ -169,7 +169,7 @@ void loop() {
                 
 
                   
-                  if(NACHVORNEGEKIPPT == false && NACHHINTENGEKIPPT == false && KURVEEINLEITEN == false)
+                  if(NACHVORNEGEKIPPT == false && NACHHINTENGEKIPPT == false && KURVEEINLEITEN == false && KURVEABGESCHLOSSEN==false)
                   {
                                    
                   faehrtNachLinks();
@@ -220,11 +220,11 @@ void loop() {
               NACHVORNEGEKIPPT = false;
               NACHHINTENGEKIPPT = false;
 
-              if(treppeUeberwunden == true )//&& VERSCHRAENKUNG == true)
+              if(treppeUeberwunden == true && KURVEABGESCHLOSSEN == false)//&& VERSCHRAENKUNG == true)
               {
 
                 
-                if(getDistanz()> 30 || KURVEEINLEITEN == true )
+                if(getDistanz2()> 30 || KURVEEINLEITEN == true )
                 {
 
                 if(yaw > -80)
@@ -238,13 +238,19 @@ void loop() {
                 {
                    
                 KURVEEINLEITEN = false;
-                if(getDistanz2() <30){
-                  while(getDistanz2() < 30){
+                if(getDistanz() <30){ //war vorher auf get distanz2
+                  delay(900);
+                  while(getDistanz() < 30){ // War vorher auf get Distanz 2
+                    
                     faehrtGeradeAus();
+                    
                     HALBEKURVEABGESCHLOSSEN = true;
                     Serial.print("     Fahre Gerade aus !!!!!    ");
                   }
+                  //delay(75);
+                  
                 }else if (KURVEABGESCHLOSSEN == false){
+                  
                   fahreKurveNachLinks();
                    Serial.print("     Kurve fertiiiiiiiiiiigggggg !!!!!    ");
                   
