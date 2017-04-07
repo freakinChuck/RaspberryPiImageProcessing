@@ -17,6 +17,10 @@ public class Camera {
         capture = new VideoCapture(index);
     }
 
+    public boolean Available(){
+        return capture.isOpened();
+    }
+
     public Mat Capture(){
         Mat captureImageMat = new Mat();
         capture.read(captureImageMat);

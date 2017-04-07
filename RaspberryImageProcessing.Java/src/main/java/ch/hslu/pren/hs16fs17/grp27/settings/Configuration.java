@@ -8,7 +8,7 @@ import com.pi4j.io.gpio.RaspiPin;
  */
 public class Configuration {
 
-    public static final int SIDECAMERAINDEX = 0;
+    public static final int SIDECAMERAINDEX = 1;
     public static final int FRONTCAMERAINDEX = 0;
 
     public static final Pin STARTSIGNALPIN = RaspiPin.GPIO_01;

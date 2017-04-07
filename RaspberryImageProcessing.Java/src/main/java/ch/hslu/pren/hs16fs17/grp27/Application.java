@@ -18,7 +18,7 @@ import java.util.concurrent.Future;
  * Created by silvio on 17.03.17.
  */
 public class Application {
-    public static void main(String[] args){
+    public static void main(String[] args) throws InterruptedException {
 
         Application.SetUpEnvironment();
 
@@ -27,6 +27,18 @@ public class Application {
         RedBarFinder redBarFinder = new RedBarFinder();
         RomanCharacterFinder romanCharacterFinder = new RomanCharacterFinder();
         ArduinoCommunication communication = new ArduinoCommunication();
+
+
+        int c = 0;
+        while (!frontCamera.Available() && c++ < 20){
+            Thread.sleep(250);
+            System.out.println("Camera not Available");
+
+        }
+
+        if (!frontCamera.Available()){
+            return;
+        }
 
         communication.ClearPinData();
 
@@ -124,6 +136,14 @@ public class Application {
                 maxNumbers = currentCount;
             }
         }
+
+
+        System.out.println("Number "+ maxKey + " found");
+
+        communication.SendNumber(maxKey);
+
+        System.out.println("Number " + maxKey + " sent to Arduino");
+
 
         PrintNumberInConsole(maxKey, maxNumbers, objects.length);
 
