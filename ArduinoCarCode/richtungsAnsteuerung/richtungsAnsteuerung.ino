@@ -1,4 +1,7 @@
 #include "MPUheader.h"
+#include <avr/io.h> 
+#include <avr/wdt.h>
+
 
 
 boolean NACHHINTENGEKIPPT = false;
@@ -8,21 +11,50 @@ boolean VERSCHRAENKUNG = false;
 boolean KURVEEINLEITEN = false;
 boolean  HALBEKURVEABGESCHLOSSEN = false;
 boolean KURVEABGESCHLOSSEN = false;
+boolean  geradeAus = false;
+int messung = 0;
+int erkanntezahl = 0;
+int softwareReset = 0;
+
+
 
 
 
 void setup() {
-  mpuSetup();
 
- 
+  
+  mpuSetup();
+  zahlenSetup();
   motorSetup();
   ultraschallSetup();
+  ampelSetup();
      
 
 
 }
 
 void loop() {
+
+ 
+
+// hier Ampelerkennungs Methode einsetzen
+/*
+ ampelErkennung();
+ if(messung<=0)
+ {
+ if(0 != zahlenErkennung())
+ {
+
+  delay(1000);
+  erkanntezahl = zahlenErkennung();
+  messung ++;
+ 
+  
+  
+ }
+ }
+ */
+ 
 
 
   
@@ -126,9 +158,12 @@ void loop() {
               {
                 Serial.print("faehrt gerade aus ");
 
+               
+
                 if(KURVEEINLEITEN == false)
                 {
                faehrtGeradeAus();
+                geradeAus = true;
                 }
               
                     
@@ -186,6 +221,7 @@ void loop() {
                 if(KURVEEINLEITEN == false)
                 {
                   faehrtGeradeAus();
+                   geradeAus = true;
                  
                 }
                                                  // Achtung hier kann es vlt nicht funktionieren
@@ -247,7 +283,7 @@ void loop() {
                     HALBEKURVEABGESCHLOSSEN = true;
                     Serial.print("     Fahre Gerade aus !!!!!    ");
                   }
-                  //delay(75);
+                 
                   
                 }else if (KURVEABGESCHLOSSEN == false){
                   
@@ -297,7 +333,8 @@ void loop() {
             
                
             }
-            //Serial.println(ypr[2] * 180/M_PI);
+            Serial.print(" erkannte Zahl : ");
+            Serial.println(erkanntezahl);
             
         #endif
 
@@ -307,6 +344,19 @@ void loop() {
         blinkState = !blinkState;
         digitalWrite(LED_PIN, blinkState);
     }
+
+     if(softwareReset==0)
+  {
+  if(geradeAus == false)
+  {
+     wdt_enable(WDTO_1S); 
+     softwareReset = 1;
+     Serial.println(   softwareReset);
+     
+  }
+  }
+  Serial.print(  "softwareReset: ");
+  Serial.println(   softwareReset);
 
 }
 

@@ -160,6 +160,8 @@ public class Application {
 
         PrintNumberInConsole(maxKey, maxNumbers, objects.length);
 
+        Thread.sleep(10000);
+
     }
 
     public static void SetUpEnvironment(){
