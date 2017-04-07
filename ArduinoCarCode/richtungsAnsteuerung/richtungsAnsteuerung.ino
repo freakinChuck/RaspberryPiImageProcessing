@@ -1,5 +1,6 @@
 #include "MPUheader.h"
-
+#include <avr/io.h> 
+#include <avr/wdt.h>
 
 
 
@@ -10,8 +11,10 @@ boolean VERSCHRAENKUNG = false;
 boolean KURVEEINLEITEN = false;
 boolean  HALBEKURVEABGESCHLOSSEN = false;
 boolean KURVEABGESCHLOSSEN = false;
+boolean  geradeAus = false;
 int messung = 0;
 int erkanntezahl = 0;
+int softwareReset = 0;
 
 
 
@@ -32,7 +35,10 @@ void setup() {
 
 void loop() {
 
+ 
+
 // hier Ampelerkennungs Methode einsetzen
+/*
  ampelErkennung();
  if(messung<=0)
  {
@@ -47,6 +53,7 @@ void loop() {
   
  }
  }
+ */
  
 
 
@@ -151,9 +158,12 @@ void loop() {
               {
                 Serial.print("faehrt gerade aus ");
 
+               
+
                 if(KURVEEINLEITEN == false)
                 {
                faehrtGeradeAus();
+                geradeAus = true;
                 }
               
                     
@@ -211,6 +221,7 @@ void loop() {
                 if(KURVEEINLEITEN == false)
                 {
                   faehrtGeradeAus();
+                   geradeAus = true;
                  
                 }
                                                  // Achtung hier kann es vlt nicht funktionieren
@@ -333,6 +344,19 @@ void loop() {
         blinkState = !blinkState;
         digitalWrite(LED_PIN, blinkState);
     }
+
+     if(softwareReset==0)
+  {
+  if(geradeAus == false)
+  {
+     wdt_enable(WDTO_1S); 
+     softwareReset = 1;
+     Serial.println(   softwareReset);
+     
+  }
+  }
+  Serial.print(  "softwareReset: ");
+  Serial.println(   softwareReset);
 
 }
 
