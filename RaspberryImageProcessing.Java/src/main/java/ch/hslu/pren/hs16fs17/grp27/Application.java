@@ -77,24 +77,37 @@ public class Application {
 
         int trys = 0;
         boolean redBarFound = false;
-        while (processList.size() <= 10) {
+
+
+        Image[] redBarImages = new Image[10];
+        while(processList.size() <= 10) {
             Mat capturedImage = sideCamera.Capture();
             Image foundImage = redBarFinder.FindRedDoubleBar(capturedImage);
             if (foundImage != null) {
                 System.out.println("Redbar found");
 
-                Future<Integer> numberRecognitionFuture = CompletableFuture.completedFuture(foundImage)
-                        .thenApplyAsync(img -> img != null ? romanCharacterFinder.FindCharacter(img) : 0)
-                        .thenApplyAsync(i -> {
-                            if (i > 0)
-                                intList.add(i);
-                            return i;
-                        });
+                for (int counter = 0; counter < 10 && redBarFound == false; counter++) {
+                    System.out.println("Picture taken" + counter);
+                    redBarImages[counter] = redBarFinder.FindRedDoubleBar(sideCamera.Capture());
+                }
+                redBarFound = true;
 
-                processList.add(numberRecognitionFuture);
+                for (int x = 0; x < 10; x++) {
 
+
+                    Future<Integer> numberRecognitionFuture = CompletableFuture.completedFuture(redBarImages[x])
+                            .thenApplyAsync(img -> img != null ? romanCharacterFinder.FindCharacter(img) : 0)
+                            .thenApplyAsync(i -> {
+                                if (i > 0)
+                                    intList.add(i);
+                                return i;
+                            });
+
+                    processList.add(numberRecognitionFuture);
+                }
             }
         }
+
 
         for (Future<Integer> future:
                 processList){
