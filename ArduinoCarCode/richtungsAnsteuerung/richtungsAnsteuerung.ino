@@ -1,6 +1,8 @@
 #include "MPUheader.h"
 
 
+
+
 boolean NACHHINTENGEKIPPT = false;
 boolean NACHVORNEGEKIPPT = false;
 boolean treppeUeberwunden = false;
@@ -8,21 +10,44 @@ boolean VERSCHRAENKUNG = false;
 boolean KURVEEINLEITEN = false;
 boolean  HALBEKURVEABGESCHLOSSEN = false;
 boolean KURVEABGESCHLOSSEN = false;
+int messung = 0;
+int erkanntezahl = 0;
+
+
 
 
 
 void setup() {
-  mpuSetup();
 
- 
+  
+  mpuSetup();
+  zahlenSetup();
   motorSetup();
   ultraschallSetup();
+  ampelSetup();
      
 
 
 }
 
 void loop() {
+
+// hier Ampelerkennungs Methode einsetzen
+ ampelErkennung();
+ if(messung<=0)
+ {
+ if(0 != zahlenErkennung())
+ {
+
+  delay(1000);
+  erkanntezahl = zahlenErkennung();
+  messung ++;
+ 
+  
+  
+ }
+ }
+ 
 
 
   
@@ -247,7 +272,7 @@ void loop() {
                     HALBEKURVEABGESCHLOSSEN = true;
                     Serial.print("     Fahre Gerade aus !!!!!    ");
                   }
-                  //delay(75);
+                 
                   
                 }else if (KURVEABGESCHLOSSEN == false){
                   
@@ -297,7 +322,8 @@ void loop() {
             
                
             }
-            //Serial.println(ypr[2] * 180/M_PI);
+            Serial.print(" erkannte Zahl : ");
+            Serial.println(erkanntezahl);
             
         #endif
 
