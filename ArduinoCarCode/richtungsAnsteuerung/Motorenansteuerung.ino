@@ -13,6 +13,9 @@ int enB = 8;
 int in3 = 10;
 int in4 = 9;
 
+int speedGeradeAus = 80;
+
+
 void motorSetup()
 {
 pinMode(enA, OUTPUT);
@@ -21,6 +24,17 @@ pinMode(in1, OUTPUT);
 pinMode(in2, OUTPUT);
 pinMode(in3, OUTPUT);
 pinMode(in4, OUTPUT);
+
+}
+
+void setSpeedGeradeAusL()
+{
+  speedGeradeAus = 30;
+}
+
+void setSpeedGeradeAusH()
+{
+  speedGeradeAus = 80;
 }
 
 void faehrtNachRechts()
@@ -48,9 +62,9 @@ void faehrtNachLinks()
 
 void faehrtGeradeAus()
 {
-                   analogWrite(in1, 80);
+                   analogWrite(in1, speedGeradeAus);
                    digitalWrite(in2,LOW);
-                   analogWrite(in3, 80);
+                   analogWrite(in3, speedGeradeAus);
                    digitalWrite(in4, LOW);
                 // set speed to 200 out of possible range 0~255
                   digitalWrite(enB, HIGH);
@@ -70,7 +84,7 @@ void nachHintenGekippt()
 
 void nachVorneGekippt()
 {
-                   analogWrite(in1, 20);
+                   analogWrite(in1, 80);
                    digitalWrite(in2,LOW);
                    analogWrite(in3, 20);
                    digitalWrite(in4, LOW);
@@ -87,10 +101,10 @@ void nachVorneGekippt()
               // {
                
   
-                   analogWrite(in1, 120);
+                   analogWrite(in1, 100);
                    digitalWrite(in2,LOW);
                    digitalWrite(in3, LOW);
-                   analogWrite(in4, 120);
+                   analogWrite(in4, 100);
                    // set speed to 200 out of possible range 0~255
                   digitalWrite(enB, HIGH);
                   digitalWrite(enA, HIGH);
@@ -116,8 +130,8 @@ void fahreKurveNachLinks()
 
 
                    digitalWrite(in1, LOW);
-                   analogWrite(in2,120);
-                   analogWrite(in3, 120);
+                   analogWrite(in2,100);
+                   analogWrite(in3, 100);
                    digitalWrite(in4, LOW);
                 // set speed to 200 out of possible range 0~255
                   digitalWrite(enB, HIGH);

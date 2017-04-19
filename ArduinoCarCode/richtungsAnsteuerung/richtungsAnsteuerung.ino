@@ -2,8 +2,8 @@
 #include <avr/io.h> 
 #include <avr/wdt.h>
 
-
-
+boolean KURVEBEENDEN = false;
+boolean SELBSTHALTUNG = false;
 boolean NACHHINTENGEKIPPT = false;
 boolean NACHVORNEGEKIPPT = false;
 boolean treppeUeberwunden = false;
@@ -120,10 +120,16 @@ void loop() {
             {
             
               //Ab hier muss mit dem grössten Zustand begonnen werden
-              if(yaw>160)
+              if(yaw>170)
               {
                 Serial.print("faehrt in die entgegengesetzte Richtung ");
+                if(KURVEBEENDEN == true)
+                {
                 KURVEABGESCHLOSSEN = true;
+                SELBSTHALTUNG = false;
+                }
+                
+                
                  faehrtGeradeAus();
               }
               else if(yaw>140)
@@ -143,7 +149,7 @@ void loop() {
               {
                  Serial.print("faehrt stark nach rechts ");
               }
-              else if(yaw >20) // war vorher auf 20
+              else if(yaw >10) // war vorher auf 20
               {
                 
                   Serial.print("faehrt  nach rechts ");
@@ -175,10 +181,15 @@ void loop() {
             }
             else if(yaw<0)
             {
-              if(yaw<-160)
+              if(yaw<-170)
               {
                 Serial.print("faehrt in die entgegengesetzte Richtung ");
+                if(KURVEBEENDEN == true)
+                {
                 KURVEABGESCHLOSSEN = true;
+                SELBSTHALTUNG = false;
+                }
+               
                  faehrtGeradeAus();
               }
               else if(yaw<-140)
@@ -197,7 +208,7 @@ void loop() {
               {
                 Serial.print("faehrt stark nach links ");
               }
-              else if(yaw<-20) // war vorher auf 20
+              else if(yaw<-10) // war vorher auf 20
               {
                 Serial.print("faehrt  nach links ");
                  
@@ -232,7 +243,7 @@ void loop() {
 
             
            
-            if(pitch > 20)
+            if(pitch > 15)
             {
               
               Serial.print(" ,ist nach hinten gekippt  ");
@@ -256,16 +267,20 @@ void loop() {
               NACHVORNEGEKIPPT = false;
               NACHHINTENGEKIPPT = false;
 
+              //getDistanz2 ist Sensor auf der Seite
+
               if(treppeUeberwunden == true && KURVEABGESCHLOSSEN == false)//&& VERSCHRAENKUNG == true)
               {
 
                 
-                if(getDistanz2()> 30 || KURVEEINLEITEN == true )
+                if((getDistanz2()> 30 && KURVEABGESCHLOSSEN == false ) || KURVEEINLEITEN == true || SELBSTHALTUNG == true )
                 {
+                  SELBSTHALTUNG = true;
 
-                if(yaw > -80)
+                if(yaw > -85 && HALBEKURVEABGESCHLOSSEN == false) // war auf -85
                 {  
                 fahreKurveNachLinks();
+                //fahreKurveNachRechts();
                 
                 KURVEEINLEITEN = true;
                  Serial.print("     Fahre Kurve !!!!!    ");
@@ -274,24 +289,27 @@ void loop() {
                 {
                    
                 KURVEEINLEITEN = false;
-                if(getDistanz() <30){ //war vorher auf get distanz2
-                  delay(900);
-                  while(getDistanz() < 30){ // War vorher auf get Distanz 2
-                    
+                if(getDistanz()> 20 && KURVEBEENDEN == false){ //war vorher auf get distanz2
+                  //delay(900);
+                  
+                  while(getDistanz() > 20){ // War vorher auf get Distanz 2
+                    setSpeedGeradeAusL();
                     faehrtGeradeAus();
                     
                     HALBEKURVEABGESCHLOSSEN = true;
-                    Serial.print("     Fahre Gerade aus !!!!!    ");
+                    Serial.println("     Fahre Gerade aus !!!!!    ");
                   }
                  
                   
                 }else if (KURVEABGESCHLOSSEN == false){
-                  
+                  //while(getYAW()>-160/*KURVEABGESCHLOSSEN == false*/){
+                  KURVEBEENDEN = true;
                   fahreKurveNachLinks();
-                   Serial.print("     Kurve fertiiiiiiiiiiigggggg !!!!!    ");
-                  
+                   Serial.println("     Kurve beendennnnnnnn !!!!!    ");
+                 // }
                   
                   }
+                 
                 
                   
                 }
@@ -312,6 +330,14 @@ void loop() {
                
                 
               } // Treppe Überwunden aktiviert
+              else
+                  {
+                    if(KURVEABGESCHLOSSEN == true)
+                    {
+                    Serial.println("Kurve Fertig !!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                    setSpeedGeradeAusH();
+                    }
+                  }
 
               
             }
@@ -345,16 +371,17 @@ void loop() {
         digitalWrite(LED_PIN, blinkState);
     }
 
-     if(softwareReset==0)
+    /* if(softwareReset==0)
   {
   if(geradeAus == false)
   {
      wdt_enable(WDTO_1S); 
      softwareReset = 1;
+     mpu.resetFIFO();
      Serial.println(   softwareReset);
      
   }
-  }
+  }*/
   Serial.print(  "softwareReset: ");
   Serial.println(   softwareReset);
 
