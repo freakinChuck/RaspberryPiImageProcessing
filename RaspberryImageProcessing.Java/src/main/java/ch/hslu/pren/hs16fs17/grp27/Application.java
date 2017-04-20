@@ -75,37 +75,50 @@ public class Application {
         List<Future<Integer>> processList = new ArrayList<>();
         List<Integer> intList = new ArrayList<>();
 
-        int trys = 0;
         boolean redBarFound = false;
 
+        final int numberOfImagesToTake = 10;
 
-        Image[] redBarImages = new Image[10];
-        while(processList.size() <= 10) {
+        Image[] redBarImages = new Image[numberOfImagesToTake];
+
+        while (redBarImages[0] == null) {
             Mat capturedImage = sideCamera.Capture();
             Image foundImage = redBarFinder.FindRedDoubleBar(capturedImage);
             if (foundImage != null) {
                 System.out.println("Redbar found");
 
-                for (int counter = 0; counter < 10 && redBarFound == false; counter++) {
-                    System.out.println("Picture taken" + counter);
-                    redBarImages[counter] = redBarFinder.FindRedDoubleBar(sideCamera.Capture());
-                }
-                redBarFound = true;
-
-                for (int x = 0; x < 10; x++) {
-
-
-                    Future<Integer> numberRecognitionFuture = CompletableFuture.completedFuture(redBarImages[x])
-                            .thenApplyAsync(img -> img != null ? romanCharacterFinder.FindCharacter(img) : 0)
-                            .thenApplyAsync(i -> {
-                                if (i > 0)
-                                    intList.add(i);
-                                return i;
-                            });
-
-                    processList.add(numberRecognitionFuture);
-                }
+                redBarImages[0] = foundImage;
             }
+        }
+
+        Mat[] matrixesToEvaluate = new Mat[numberOfImagesToTake -1];
+        for (int i = 0; i < matrixesToEvaluate.length; i++) {
+            System.out.println("Picture taken" + i);
+            matrixesToEvaluate[i] = sideCamera.Capture();
+        }
+
+        for (int i = 0; i < matrixesToEvaluate.length; i++) {
+            redBarImages[i+1] = redBarFinder.FindRedDoubleBar(matrixesToEvaluate[i]);
+            if (redBarImages[i+1] != null) {
+                System.out.println("RedbarFound Picture" + i);
+            }
+            else {
+                System.out.println("RedbarFailed Picture" + i);
+            }
+        }
+
+        for (int x = 0; x < numberOfImagesToTake; x++) {
+
+
+            Future<Integer> numberRecognitionFuture = CompletableFuture.completedFuture(redBarImages[x])
+                    .thenApplyAsync(img -> img != null ? romanCharacterFinder.FindCharacter(img) : 0)
+                    .thenApplyAsync(i -> {
+                        if (i > 0)
+                            intList.add(i);
+                        return i;
+                    });
+
+            processList.add(numberRecognitionFuture);
         }
 
 
