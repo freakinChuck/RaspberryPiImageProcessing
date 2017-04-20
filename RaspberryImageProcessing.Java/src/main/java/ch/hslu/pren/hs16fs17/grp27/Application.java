@@ -14,6 +14,8 @@ import org.opencv.core.Mat;
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
@@ -187,23 +189,27 @@ public class Application {
         String currentDateAsString = String.format("%tY%te%td%tl%tm", calendar, calendar, calendar, calendar, calendar);
         String folderBasePath = "~/Images/" + currentDateAsString;
 
-
+        if (!Files.notExists(Paths.get(folderBasePath))) {
+            new File(folderBasePath).mkdirs();
+        }
 
         for (int i = 0; i < matrixesToEvaluate.length; i++) {
             Mat mat = matrixesToEvaluate[i];
             MatToBufImg matToBufImg = new MatToBufImg();
             matToBufImg.setMatrix(mat, "png");
 
-            File outputfile = new File("Original" + String.format("%03d%n")+ ".png");
+            File outputfile = new File(folderBasePath + "/" + "Original" + String.format("%03d%n")+ ".png");
             try {
                 ImageIO.write(matToBufImg.getBufferedImage(), "png", outputfile);
+                System.out.println("Wrote File: " + outputfile.getAbsolutePath());
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
         }
 
-        Thread.sleep(10000);
+        //Thread.sleep(10000);
 
     }
 
