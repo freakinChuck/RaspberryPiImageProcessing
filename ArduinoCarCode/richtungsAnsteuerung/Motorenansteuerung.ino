@@ -25,12 +25,20 @@ pinMode(in2, OUTPUT);
 pinMode(in3, OUTPUT);
 pinMode(in4, OUTPUT);
 
+
 }
 
 void setSpeedGeradeAusL()
 {
+  speedGeradeAus = 65;
+}
+
+
+void setSpeedGeradeAusLL()
+{
   speedGeradeAus = 30;
 }
+
 
 void setSpeedGeradeAusH()
 {
@@ -39,9 +47,10 @@ void setSpeedGeradeAusH()
 
 void faehrtNachRechts()
 {
+  
 
                    digitalWrite(in1,LOW);
-                   analogWrite(in2, 20);
+                   analogWrite(in2, 120);
                    analogWrite(in3, 120);
                    digitalWrite(in4, LOW);
                 // set speed to 200 out of possible range 0~255
@@ -54,7 +63,7 @@ void faehrtNachLinks()
                    analogWrite(in1, 120);
                    digitalWrite(in2,LOW);                 
                    digitalWrite(in3, LOW);
-                   analogWrite(in4, 20);
+                   analogWrite(in4, 120);
                 // set speed to 200 out of possible range 0~255
                   digitalWrite(enB, HIGH);
                   digitalWrite(enA, HIGH);
@@ -84,7 +93,7 @@ void nachHintenGekippt()
 
 void nachVorneGekippt()
 {
-                   analogWrite(in1, 80);
+                   analogWrite(in1, 120);
                    digitalWrite(in2,LOW);
                    analogWrite(in3, 20);
                    digitalWrite(in4, LOW);
@@ -101,10 +110,10 @@ void nachVorneGekippt()
               // {
                
   
-                   analogWrite(in1, 100);
+                   analogWrite(in1, 120);
                    digitalWrite(in2,LOW);
                    digitalWrite(in3, LOW);
-                   analogWrite(in4, 100);
+                   analogWrite(in4, 120);
                    // set speed to 200 out of possible range 0~255
                   digitalWrite(enB, HIGH);
                   digitalWrite(enA, HIGH);
@@ -130,8 +139,8 @@ void fahreKurveNachLinks()
 
 
                    digitalWrite(in1, LOW);
-                   analogWrite(in2,100);
-                   analogWrite(in3, 100);
+                   analogWrite(in2,120); // waren auf 100
+                   analogWrite(in3, 120);
                    digitalWrite(in4, LOW);
                 // set speed to 200 out of possible range 0~255
                   digitalWrite(enB, HIGH);

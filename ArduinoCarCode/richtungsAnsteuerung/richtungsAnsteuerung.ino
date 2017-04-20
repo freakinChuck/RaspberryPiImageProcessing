@@ -2,7 +2,10 @@
 #include <avr/io.h> 
 #include <avr/wdt.h>
 
+int parcours = 0; //0 = Parcours rechts    1 = Parcours Links
+
 boolean KURVEBEENDEN = false;
+int treppe = 0;
 boolean SELBSTHALTUNG = false;
 boolean NACHHINTENGEKIPPT = false;
 boolean NACHVORNEGEKIPPT = false;
@@ -149,14 +152,14 @@ void loop() {
               {
                  Serial.print("faehrt stark nach rechts ");
               }
-              else if(yaw >10) // war vorher auf 20
+              else if(yaw >20) // war vorher auf 20
               {
                 
                   Serial.print("faehrt  nach rechts ");
                                  
                     if(NACHVORNEGEKIPPT == false && NACHHINTENGEKIPPT == false && KURVEEINLEITEN == false && KURVEABGESCHLOSSEN == false)
                   {
-                   faehrtNachRechts();
+                   //faehrtNachRechts();
                   }
                               
               }
@@ -208,7 +211,7 @@ void loop() {
               {
                 Serial.print("faehrt stark nach links ");
               }
-              else if(yaw<-10) // war vorher auf 20
+              else if(yaw<-20) // war vorher auf 20
               {
                 Serial.print("faehrt  nach links ");
                  
@@ -218,9 +221,9 @@ void loop() {
                   if(NACHVORNEGEKIPPT == false && NACHHINTENGEKIPPT == false && KURVEEINLEITEN == false && KURVEABGESCHLOSSEN==false)
                   {
                                    
-                  faehrtNachLinks();
+                 // faehrtNachLinks();
                   }      
-
+ 
                          
                   
                 
@@ -247,20 +250,26 @@ void loop() {
             {
               
               Serial.print(" ,ist nach hinten gekippt  ");
+              
               nachHintenGekippt();
+              treppe++;
               NACHHINTENGEKIPPT = true;
+              setSpeedGeradeAusL();
+              
+              
               NACHVORNEGEKIPPT = false;
               
               
               
             }
-            else if(pitch < -5)
+            else if(pitch < -1)
             {
               Serial.print(" ,ist nach vorne gekippt ");
             nachVorneGekippt();
             treppeUeberwunden = true;
             NACHVORNEGEKIPPT = true;
             NACHHINTENGEKIPPT = false;
+            setSpeedGeradeAusH();
             }
             else{
               Serial.print("  ");
@@ -277,9 +286,10 @@ void loop() {
                 {
                   SELBSTHALTUNG = true;
 
-                if(yaw > -85 && HALBEKURVEABGESCHLOSSEN == false) // war auf -85
+                if(yaw > -75 && HALBEKURVEABGESCHLOSSEN == false) // war auf -85
                 {  
                 fahreKurveNachLinks();
+               
                 //fahreKurveNachRechts();
                 
                 KURVEEINLEITEN = true;
@@ -289,16 +299,18 @@ void loop() {
                 {
                    
                 KURVEEINLEITEN = false;
-                if(getDistanz()> 20 && KURVEBEENDEN == false){ //war vorher auf get distanz2
-                  //delay(900);
+                if(getDistanz()> 18 && KURVEBEENDEN == false){ //war vorher auf 20
+                  //delay(2000);
                   
-                  while(getDistanz() > 20){ // War vorher auf get Distanz 2
-                    setSpeedGeradeAusL();
+                  while(getDistanz() > 18){ //war vorher auf 20
+                    setSpeedGeradeAusLL();
                     faehrtGeradeAus();
+                    
                     
                     HALBEKURVEABGESCHLOSSEN = true;
                     Serial.println("     Fahre Gerade aus !!!!!    ");
                   }
+                  
                  
                   
                 }else if (KURVEABGESCHLOSSEN == false){
@@ -371,7 +383,7 @@ void loop() {
         digitalWrite(LED_PIN, blinkState);
     }
 
-    /* if(softwareReset==0)
+     if(softwareReset==0)
   {
   if(geradeAus == false)
   {
@@ -381,7 +393,9 @@ void loop() {
      Serial.println(   softwareReset);
      
   }
-  }*/
+  }
+
+  
   Serial.print(  "softwareReset: ");
   Serial.println(   softwareReset);
 
