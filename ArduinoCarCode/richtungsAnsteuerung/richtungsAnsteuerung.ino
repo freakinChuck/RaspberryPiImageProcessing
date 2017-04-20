@@ -3,7 +3,7 @@
 #include <avr/wdt.h>
 
 int parcours = 0; //0 = Parcours rechts    1 = Parcours Links
-
+boolean KeineKorrektur = false;
 boolean KURVEBEENDEN = false;
 boolean SELBSTHALTUNG = false;
 boolean NACHHINTENGEKIPPT = false;
@@ -13,6 +13,7 @@ boolean VERSCHRAENKUNG = false;
 boolean KURVEEINLEITEN = false;
 boolean  HALBEKURVEABGESCHLOSSEN = false;
 boolean KURVEABGESCHLOSSEN = false;
+boolean TorKorrekrurNachLinks = false;
 boolean  geradeAus = false;
 int messung = 0;
 int erkanntezahl = 0;
@@ -352,12 +353,24 @@ void loop() {
                   {
                     if(KURVEABGESCHLOSSEN == true)
                     {
+                      if((abstandVorne() == -1 || abstandVorne()>20 )&& yaw<-170 && TorKorrekrurNachLinks == false  )
+                      {
                     Serial.println("Kurve Fertig !!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                     setSpeedGeradeAusH();
+                      }
+                      else{
+                        TorKorrekrurNachLinks = true;
+                        while((abstandVorne()==-1 || abstandVorne()<50)&& KeineKorrektur == false && abstandLinks()>30)
+                        {
+                        Serial.println("Fehler Tor Links");
+                      fahreKurveNachRechts();
+                      }
+                      KeineKorrektur = true;
                     }
                   }
 
               
+            }
             }
             
             
