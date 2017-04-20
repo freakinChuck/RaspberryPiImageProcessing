@@ -39,7 +39,7 @@ void ultraschallSetup() {
 
 }
 
-int getDistanz() {
+int abstandVorne() {
 /* The following trigPin/echoPin cycle is used to determine the
  distance of the nearest object by bouncing soundwaves off of it. */ 
  digitalWrite(trigPin, LOW); 
@@ -63,6 +63,7 @@ int getDistanz() {
  else {
  /* Send the distance to the computer using Serial protocol, and
  turn LED OFF to indicate successful reading. */
+ Serial.print(" Abstand Vorne: ");
  Serial.println(distance);
  digitalWrite(LEDPin, LOW); 
  }
@@ -75,7 +76,7 @@ int distanz = (int)(distance);
 }
 
 
-int getDistanz2() {
+int abstandLinks() {
 /* The following trigPin/echoPin cycle is used to determine the
  distance of the nearest object by bouncing soundwaves off of it. */ 
  digitalWrite(trigPin2, LOW); 
@@ -99,6 +100,7 @@ int getDistanz2() {
  else {
  /* Send the distance to the computer using Serial protocol, and
  turn LED OFF to indicate successful reading. */
+ Serial.print(" Abstand Links: ");
  Serial.println(distance2);
  digitalWrite(LEDPin, LOW); 
  }

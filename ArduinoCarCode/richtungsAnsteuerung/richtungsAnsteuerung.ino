@@ -5,7 +5,6 @@
 int parcours = 0; //0 = Parcours rechts    1 = Parcours Links
 
 boolean KURVEBEENDEN = false;
-int treppe = 0;
 boolean SELBSTHALTUNG = false;
 boolean NACHHINTENGEKIPPT = false;
 boolean NACHVORNEGEKIPPT = false;
@@ -41,8 +40,8 @@ void loop() {
  
 
 // hier Ampelerkennungs Methode einsetzen
-/*
- ampelErkennung();
+
+/* ampelErkennung();
  if(messung<=0)
  {
  if(0 != zahlenErkennung())
@@ -55,8 +54,8 @@ void loop() {
   
   
  }
- }
- */
+ }*/
+ 
  
 
 
@@ -235,7 +234,7 @@ void loop() {
                 if(KURVEEINLEITEN == false)
                 {
                   faehrtGeradeAus();
-                   geradeAus = true;
+                  geradeAus = true;
                  
                 }
                                                  // Achtung hier kann es vlt nicht funktionieren
@@ -252,7 +251,6 @@ void loop() {
               Serial.print(" ,ist nach hinten gekippt  ");
               
               nachHintenGekippt();
-              treppe++;
               NACHHINTENGEKIPPT = true;
               setSpeedGeradeAusL();
               
@@ -261,6 +259,14 @@ void loop() {
               
               
               
+            }
+            else if(pitch > 10)
+            {
+              Serial.print(" ,ist leicht nach hinten gekippt  ");
+              if( treppeUeberwunden == true)
+              {
+                faehrtUeberVerschraenkung();
+              }
             }
             else if(pitch < -1)
             {
@@ -278,11 +284,11 @@ void loop() {
 
               //getDistanz2 ist Sensor auf der Seite
 
-              if(treppeUeberwunden == true && KURVEABGESCHLOSSEN == false)//&& VERSCHRAENKUNG == true)
+              if(treppeUeberwunden == true && KURVEABGESCHLOSSEN == false)
               {
 
                 
-                if((getDistanz2()> 30 && KURVEABGESCHLOSSEN == false ) || KURVEEINLEITEN == true || SELBSTHALTUNG == true )
+                if((abstandLinks()> 30 && KURVEABGESCHLOSSEN == false ) || KURVEEINLEITEN == true || SELBSTHALTUNG == true )
                 {
                   SELBSTHALTUNG = true;
 
@@ -299,10 +305,10 @@ void loop() {
                 {
                    
                 KURVEEINLEITEN = false;
-                if(getDistanz()> 18 && KURVEBEENDEN == false){ //war vorher auf 20
+                if((abstandVorne()> 18||abstandVorne()== -1) && KURVEBEENDEN == false){ //war vorher auf 20
                   //delay(2000);
                   
-                  while(getDistanz() > 18){ //war vorher auf 20
+                  while((abstandVorne()> 18||abstandVorne()== -1)){ //war vorher auf 20
                     setSpeedGeradeAusLL();
                     faehrtGeradeAus();
                     

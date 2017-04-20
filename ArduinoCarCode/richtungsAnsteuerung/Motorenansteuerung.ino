@@ -69,6 +69,18 @@ void faehrtNachLinks()
                   digitalWrite(enA, HIGH);
 }
 
+void faehrtUeberVerschraenkung()
+{
+                
+                   analogWrite(in1, 150);
+                   digitalWrite(in2,LOW);
+                   analogWrite(in3, 70);
+                   digitalWrite(in4, LOW);
+                // set speed to 200 out of possible range 0~255
+                  digitalWrite(enB, HIGH);
+                  digitalWrite(enA, HIGH);
+}
+
 void faehrtGeradeAus()
 {
                    analogWrite(in1, speedGeradeAus);
