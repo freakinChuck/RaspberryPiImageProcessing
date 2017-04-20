@@ -4,12 +4,16 @@ import ch.hslu.pren.hs16fs17.grp27.imageprocessing.helper.Image;
 import ch.hslu.pren.hs16fs17.grp27.imageprocessing.GreenlightFinder;
 import ch.hslu.pren.hs16fs17.grp27.imageprocessing.RedBarFinder;
 import ch.hslu.pren.hs16fs17.grp27.imageprocessing.RomanCharacterFinder;
-import ch.hslu.pren.hs16fs17.grp27.intercomm.ArduinoCommunication;
+import ch.hslu.pren.hs16fs17.grp27.imageprocessing.helper.MatToBufImg;
+import ch.hslu.pren.hs16fs17.grp27.intercomm.GpioCommunication;
 import ch.hslu.pren.hs16fs17.grp27.io.Camera;
 import ch.hslu.pren.hs16fs17.grp27.settings.Configuration;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 
+import javax.imageio.ImageIO;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
@@ -26,23 +30,27 @@ public class Application {
         GreenlightFinder greenlightFinder = new GreenlightFinder();
         RedBarFinder redBarFinder = new RedBarFinder();
         RomanCharacterFinder romanCharacterFinder = new RomanCharacterFinder();
-        ArduinoCommunication communication = new ArduinoCommunication();
+        GpioCommunication communication = new GpioCommunication();
 
+        communication.ClearPinData();
+        communication.InitiateWaitState();
 
-        int c = 0;
-        while (!frontCamera.Available() && c++ < 20){
+        int count = 0;
+        while (!frontCamera.Available() && count++ < 20){
             Thread.sleep(250);
             System.out.println("Camera not Available");
 
         }
 
         if (!frontCamera.Available()){
+            System.out.println("TILT.....");
+            communication.DisplayTilt();
+            Thread.sleep(2000);
+
+            System.out.println("Shutdown initiated....");
+            communication.ClearPinData();
             return;
         }
-
-        communication.ClearPinData();
-
-        //Executor executor = new ThreadPoolExecutor(3, 100, );
 
         while (!greenlightFinder.ImageContainsGreenLight(frontCamera.Capture())){
             System.out.println("waiting for Greenlight");
@@ -149,8 +157,8 @@ public class Application {
         Map<Integer, Long> numbers = new HashMap<>();
         for (int i = 1; i <= 5; i++) {
             final int currentEvaluationNumber = i;
-            long count = Arrays.stream(objects).filter(o -> (int) o == currentEvaluationNumber).count();
-            numbers.put(currentEvaluationNumber, count);
+            long numberCount = Arrays.stream(objects).filter(o -> (int) o == currentEvaluationNumber).count();
+            numbers.put(currentEvaluationNumber, numberCount);
         }
 
         int maxKey = 1;
@@ -166,12 +174,34 @@ public class Application {
 
         System.out.println("Number "+ maxKey + " found");
 
+        communication.DisplayNumber(maxKey);
         communication.SendNumber(maxKey);
+
 
         System.out.println("Number " + maxKey + " sent to Arduino");
 
 
         PrintNumberInConsole(maxKey, maxNumbers, objects.length);
+
+        Calendar calendar = Calendar.getInstance();
+        String currentDateAsString = String.format("%tY%te%td%tl%tm", calendar, calendar, calendar, calendar, calendar);
+        String folderBasePath = "~/Images/" + currentDateAsString;
+
+
+
+        for (int i = 0; i < matrixesToEvaluate.length; i++) {
+            Mat mat = matrixesToEvaluate[i];
+            MatToBufImg matToBufImg = new MatToBufImg();
+            matToBufImg.setMatrix(mat, "png");
+
+            File outputfile = new File("Original" + String.format("%03d%n")+ ".png");
+            try {
+                ImageIO.write(matToBufImg.getBufferedImage(), "png", outputfile);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
 
         Thread.sleep(10000);
 
