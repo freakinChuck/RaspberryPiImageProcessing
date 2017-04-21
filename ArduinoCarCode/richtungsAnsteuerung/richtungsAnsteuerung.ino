@@ -3,6 +3,7 @@
 #include <avr/wdt.h>
 
 int parcours = 0; //0 = Parcours rechts    1 = Parcours Links
+boolean STARTerfolgreich = true;
 boolean KeineKorrektur = false;
 boolean KURVEBEENDEN = false;
 boolean SELBSTHALTUNG = false;
@@ -18,6 +19,7 @@ boolean  geradeAus = false;
 int messung = 0;
 int erkanntezahl = 0;
 int softwareReset = 0;
+int myOffset = 0;
 
 
 
@@ -111,8 +113,9 @@ void loop() {
             mpu.dmpGetQuaternion(&q, fifoBuffer);
             mpu.dmpGetGravity(&gravity, &q);
             mpu.dmpGetYawPitchRoll(ypr, &q, &gravity);
+         
+               float yaw = ((ypr[0] * 180)/M_PI)-myOffset;
             
-            float yaw = (ypr[0] * 180)/M_PI;
             //float yawGefiltert = yaw -yawKalibriert;
             float pitch = (ypr[1] * 180)/M_PI;
             float roll = (ypr[2] * 180)/M_PI;
@@ -406,9 +409,11 @@ void loop() {
   {
   if(geradeAus == false)
   {
-     wdt_enable(WDTO_1S); 
+     //wdt_enable(WDTO_1S); 
      softwareReset = 1;
-     mpu.resetFIFO();
+     //mpu.resetFIFO();
+     STARTerfolgreich = false;
+     myOffset = getYAW();
      Serial.println(   softwareReset);
      
   }
