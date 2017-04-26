@@ -3,7 +3,13 @@
 #include <avr/wdt.h>
 
 int parcours = 0; //0 = Parcours rechts    1 = Parcours Links
+int ampelerkennung = 0;    //Ampelerkennung ausgeschaltet = 0, eingeschaltet = 1
+int zahlenerkennung = 0;   //Zahlenerkennung ausgeschaltet = 0, eingeschaltet = 1
+
+
 boolean STARTerfolgreich = true;
+boolean EndeParcours = false;
+boolean Kurvenloop = false;
 boolean KeineKorrektur = false;
 boolean KURVEBEENDEN = false;
 boolean SELBSTHALTUNG = false;
@@ -16,17 +22,29 @@ boolean  HALBEKURVEABGESCHLOSSEN = false;
 boolean KURVEABGESCHLOSSEN = false;
 boolean TorKorrekrurNachLinks = false;
 boolean  geradeAus = false;
+boolean offsetDone = false;
 int messung = 0;
 int erkanntezahl = 0;
 int softwareReset = 0;
 int myOffset = 0;
+int startKurveOffset = 0;
+int test = 0;
 
 
 
 
 
 void setup() {
+/*
+TCCR0B = _BV(CS00);              //1
+TCCR0B = _BV(CS01);              //8
+TCCR0B = _BV(CS00) | _BV(CS01);  //64
+TCCR0B = _BV(CS02);              //256
+TCCR0B = _BV(CS00) | _BV(CS02);  //1024
 
+  TCCR2B = (TCCR2B & 0b11111000) | 0x04; //PWM Frequenz für pin 9 und 10  f = 490.20Hz               ****************** Achtung kann Werte von delay() verändern !!! Kontrolle bei Ultraschallsensoren ******************
+  TCCR1B = (TCCR1B & 0b11111000) | 0x04; //PWM Frequenz für pin 11 und 12 f = 490.20Hz
+  */
   
   mpuSetup();
   zahlenSetup();
@@ -43,8 +61,12 @@ void loop() {
  
 
 // hier Ampelerkennungs Methode einsetzen
-
-/* ampelErkennung();
+if(ampelerkennung == 1)
+{
+ ampelErkennung();
+}
+if(zahlenerkennung == 1)
+{
  if(messung<=0)
  {
  if(0 != zahlenErkennung())
@@ -57,7 +79,8 @@ void loop() {
   
   
  }
- }*/
+ }
+}
  
  
 
@@ -114,8 +137,7 @@ void loop() {
             mpu.dmpGetGravity(&gravity, &q);
             mpu.dmpGetYawPitchRoll(ypr, &q, &gravity);
          
-               float yaw = ((ypr[0] * 180)/M_PI)-myOffset;
-            
+            float yaw = ((ypr[0] * 180)/M_PI)-myOffset;            
             //float yawGefiltert = yaw -yawKalibriert;
             float pitch = (ypr[1] * 180)/M_PI;
             float roll = (ypr[2] * 180)/M_PI;
@@ -126,7 +148,7 @@ void loop() {
             {
             
               //Ab hier muss mit dem grössten Zustand begonnen werden
-              if(yaw>170)
+              if(yaw>165)
               {
                 Serial.print("faehrt in die entgegengesetzte Richtung ");
                 if(KURVEBEENDEN == true)
@@ -134,9 +156,19 @@ void loop() {
                 KURVEABGESCHLOSSEN = true;
                 SELBSTHALTUNG = false;
                 }
-                
-                
-                 faehrtGeradeAus();
+                if(EndeParcours == false )
+                {
+                 faehrtEGeradeAus();
+                }
+                else
+                {
+                  if(abstandLinks()>25)
+                  {
+                  stopMotor();
+                  }
+                }
+                 
+                        
               }
               else if(yaw>140)
               {
@@ -187,7 +219,7 @@ void loop() {
             }
             else if(yaw<0)
             {
-              if(yaw<-170)
+              if(yaw<-165)
               {
                 Serial.print("faehrt in die entgegengesetzte Richtung ");
                 if(KURVEBEENDEN == true)
@@ -195,8 +227,18 @@ void loop() {
                 KURVEABGESCHLOSSEN = true;
                 SELBSTHALTUNG = false;
                 }
-               
-                 faehrtGeradeAus();
+                if(EndeParcours == false)
+                {
+              faehrtEGeradeAus();
+                }
+                else
+                {
+                 if(abstandLinks()>25)
+                  {
+                  stopMotor();
+                  }
+                }
+                 
               }
               else if(yaw<-140)
               {
@@ -256,7 +298,10 @@ void loop() {
               
               nachHintenGekippt();
               NACHHINTENGEKIPPT = true;
+              if(KURVEABGESCHLOSSEN == false)
+              {
               setSpeedGeradeAusL();
+              }
               
               
               NACHVORNEGEKIPPT = false;
@@ -267,19 +312,29 @@ void loop() {
             else if(pitch > 10)
             {
               Serial.print(" ,ist leicht nach hinten gekippt  ");
-              if( treppeUeberwunden == true)
+              if( treppeUeberwunden == true && KURVEABGESCHLOSSEN==false)
               {
-                faehrtUeberVerschraenkung();
+                faehrtUeberVerschraenkung();            
               }
             }
             else if(pitch < -1)
             {
+              
               Serial.print(" ,ist nach vorne gekippt ");
+              if(KURVEABGESCHLOSSEN == false)
+              {
             nachVorneGekippt();
             treppeUeberwunden = true;
             NACHVORNEGEKIPPT = true;
             NACHHINTENGEKIPPT = false;
             setSpeedGeradeAusH();
+              }
+              else
+              {
+                
+                  EndeParcours = true;
+                
+              }
             }
             else{
               Serial.print("  ");
@@ -290,29 +345,49 @@ void loop() {
 
               if(treppeUeberwunden == true && KURVEABGESCHLOSSEN == false)
               {
+                if(test == 0)
+                {
+                if(abstandLinks()> 30)
+                {
+                  Kurvenloop = true;
+                  test++;
+                  delay(400);
+                }
+                
+                }
 
                 
-                if((abstandLinks()> 30 && KURVEABGESCHLOSSEN == false ) || KURVEEINLEITEN == true || SELBSTHALTUNG == true )
+                if((Kurvenloop == true && KURVEABGESCHLOSSEN == false ) || KURVEEINLEITEN == true || SELBSTHALTUNG == true )
                 {
                   SELBSTHALTUNG = true;
+                  if(offsetDone == false)
+                  {
+                    startKurveOffset = 0;//getYAW();
+                    offsetDone = true;
+                  }
+                  
 
-                if(yaw > -75 && HALBEKURVEABGESCHLOSSEN == false) // war auf -85
+                if((yaw-startKurveOffset) > -90 && HALBEKURVEABGESCHLOSSEN == false) // war auf -85
                 {  
+                  KURVEEINLEITEN = true;
+                 Serial.print("     Fahre Kurve !!!!!    ");
+                  //while(getYAW() > -75 && HALBEKURVEABGESCHLOSSEN == false)
+                  //{
                 fahreKurveNachLinks();
+                 // }
                
                 //fahreKurveNachRechts();
                 
-                KURVEEINLEITEN = true;
-                 Serial.print("     Fahre Kurve !!!!!    ");
+                
                 }
                  else 
                 {
                    
                 KURVEEINLEITEN = false;
-                if((abstandVorne()> 18||abstandVorne()== -1) && KURVEBEENDEN == false){ //war vorher auf 20
+                if((abstandVorne()> 14||abstandVorne()== -1) && KURVEBEENDEN == false){ //war vorher auf 20
                   //delay(2000);
                   
-                  while((abstandVorne()> 18||abstandVorne()== -1)){ //war vorher auf 20
+                  while((abstandVorne()> 14||abstandVorne()== -1)){ //war vorher auf 20
                     setSpeedGeradeAusLL();
                     faehrtGeradeAus();
                     
@@ -356,20 +431,21 @@ void loop() {
                   {
                     if(KURVEABGESCHLOSSEN == true)
                     {
-                      if((abstandVorne() == -1 || abstandVorne()>20 )&& yaw<-170 && TorKorrekrurNachLinks == false  )
+                      if((abstandVorne() == -1 || abstandVorne()<20 ) && yaw<-160 && TorKorrekrurNachLinks == false  ) // && yaw<-165    wurde entfernt
                       {
                     Serial.println("Kurve Fertig !!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                     setSpeedGeradeAusH();
                       }
-                      else{
+                     /* else{
+                        delay(2000);
                         TorKorrekrurNachLinks = true;
-                        while((abstandVorne()==-1 || abstandVorne()<50)&& KeineKorrektur == false && abstandLinks()>30)
+                        while((abstandVorne()==-1 || abstandVorne()<60)&& KeineKorrektur == false && abstandLinks()>30)
                         {
                         Serial.println("Fehler Tor Links");
                       fahreKurveNachRechts();
                       }
                       KeineKorrektur = true;
-                    }
+                    }*/
                   }
 
               
@@ -427,6 +503,6 @@ void loop() {
 
 int getYAW()
 {
-  return (int)(ypr[0] * 180)/M_PI;
+  return (int)(((ypr[0] * 180)/M_PI)-myOffset);
 }
 

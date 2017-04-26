@@ -13,7 +13,12 @@ int enB = 8;
 int in3 = 10;
 int in4 = 9;
 
-int speedGeradeAus = 80;
+int speedGeradeAus = 100;
+int speedKurve = 100;
+
+
+
+
 
 
 void motorSetup()
@@ -56,6 +61,7 @@ void faehrtNachRechts()
                 // set speed to 200 out of possible range 0~255
                   digitalWrite(enB, HIGH);
                   digitalWrite(enA, HIGH);
+                  //delay(250);
 }
 
 void faehrtNachLinks()
@@ -67,6 +73,7 @@ void faehrtNachLinks()
                 // set speed to 200 out of possible range 0~255
                   digitalWrite(enB, HIGH);
                   digitalWrite(enA, HIGH);
+                  //delay(250);
 }
 
 void faehrtUeberVerschraenkung()
@@ -79,6 +86,7 @@ void faehrtUeberVerschraenkung()
                 // set speed to 200 out of possible range 0~255
                   digitalWrite(enB, HIGH);
                   digitalWrite(enA, HIGH);
+                  //delay(250);
 }
 
 void faehrtGeradeAus()
@@ -90,52 +98,62 @@ void faehrtGeradeAus()
                 // set speed to 200 out of possible range 0~255
                   digitalWrite(enB, HIGH);
                   digitalWrite(enA, HIGH);
+                  //delay(250);
+}
+
+void faehrtEGeradeAus()
+{
+                   analogWrite(in1, 100);
+                   digitalWrite(in2,LOW);
+                   analogWrite(in3, 100);
+                   digitalWrite(in4, LOW);
+                // set speed to 200 out of possible range 0~255
+                  digitalWrite(enB, HIGH);
+                  digitalWrite(enA, HIGH);
+                  //delay(250);
 }
 
 void nachHintenGekippt()
 {
-                   analogWrite(in1, 150);
+                   analogWrite(in1, 80);
                    digitalWrite(in2,LOW);
-                   analogWrite(in3, 150);
+                   analogWrite(in3, 80);
                    digitalWrite(in4, LOW);
                 // set speed to 200 out of possible range 0~255
                   digitalWrite(enB, HIGH);
                   digitalWrite(enA, HIGH);
+                  //delay(250);
 }
 
 void nachVorneGekippt()
 {
-                   analogWrite(in1, 120);
-                   digitalWrite(in2,LOW);
-                   analogWrite(in3, 20);
-                   digitalWrite(in4, LOW);
+                   analogWrite(in2, 5);
+                   digitalWrite(in1,LOW);
+                   analogWrite(in4, 5);
+                   digitalWrite(in3, LOW);
                 // set speed to 200 out of possible range 0~255
                   digitalWrite(enB, HIGH);
                   digitalWrite(enA, HIGH);
+                  //delay(250);
 }
 
 
  void fahreKurveNachRechts()
 {
 
-  // if(getYAW()<80)
-              // {
-               
+ 
   
-                   analogWrite(in1, 120);
+                   analogWrite(in1, speedKurve);
                    digitalWrite(in2,LOW);
                    digitalWrite(in3, LOW);
-                   analogWrite(in4, 120);
+                   analogWrite(in4, speedKurve);
                    // set speed to 200 out of possible range 0~255
                   digitalWrite(enB, HIGH);
                   digitalWrite(enA, HIGH);
+                  //delay(250);
                  
                 
-              /* }
-               else
-               {
-                stopMotor();
-               }*/
+            
 
   
               
@@ -146,24 +164,20 @@ void nachVorneGekippt()
 void fahreKurveNachLinks()
 {
   
-               //if(getYAW()< -90)
-               //{
+             
 
 
                    digitalWrite(in1, LOW);
-                   analogWrite(in2,120); // waren auf 100
-                   analogWrite(in3, 120);
+                   analogWrite(in2,speedKurve); // waren auf 100
+                   analogWrite(in3, speedKurve);
                    digitalWrite(in4, LOW);
                 // set speed to 200 out of possible range 0~255
                   digitalWrite(enB, HIGH);
                   digitalWrite(enA, HIGH);
+                  //delay(250);
                  
                 
-              // }
-              // else
-               //{
-                //stopMotor();
-               //}
+             
   
 }
 
@@ -176,6 +190,7 @@ void nachLinksGekippt()
                 // set speed to 200 out of possible range 0~255
                   digitalWrite(enB, HIGH);
                   digitalWrite(enA, HIGH);
+                  //delay(250);
 }
 
 void stopMotor()
