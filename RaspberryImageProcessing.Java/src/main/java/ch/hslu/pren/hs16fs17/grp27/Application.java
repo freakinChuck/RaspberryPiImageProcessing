@@ -2,6 +2,7 @@ package ch.hslu.pren.hs16fs17.grp27;
 
 import ch.hslu.pren.hs16fs17.grp27.imageprocessing.helper.Image;
 import ch.hslu.pren.hs16fs17.grp27.imageprocessing.GreenlightFinder;
+import ch.hslu.pren.hs16fs17.grp27.imageprocessing.RedLightHeight;
 import ch.hslu.pren.hs16fs17.grp27.imageprocessing.RedBarFinder;
 import ch.hslu.pren.hs16fs17.grp27.imageprocessing.RomanCharacterFinder;
 import ch.hslu.pren.hs16fs17.grp27.imageprocessing.helper.MatToBufImg;
@@ -10,8 +11,10 @@ import ch.hslu.pren.hs16fs17.grp27.io.Camera;
 import ch.hslu.pren.hs16fs17.grp27.settings.Configuration;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.Rect;
 
 import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -29,6 +32,7 @@ public class Application {
         Application.SetUpEnvironment();
 
         Camera frontCamera = new Camera(Configuration.FRONTCAMERAINDEX);
+        RedLightHeight redLightHeight = new RedLightHeight();
         GreenlightFinder greenlightFinder = new GreenlightFinder();
         RedBarFinder redBarFinder = new RedBarFinder();
         RomanCharacterFinder romanCharacterFinder = new RomanCharacterFinder();
@@ -54,7 +58,19 @@ public class Application {
             return;
         }
 
-        while (!greenlightFinder.ImageContainsGreenLight(frontCamera.Capture())){
+        while(!redLightHeight.FindRedLightHeight(frontCamera.Capture())){
+            System.out.println("waiting for Redlight");
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+            }
+        }
+
+        System.out.println("Redlight found at: " + redLightHeight.getRedPos());
+
+        Rect belowRedLight = new Rect(0, redLightHeight.getRedPos(), frontCamera.Capture().width(),frontCamera.Capture().height()-(redLightHeight.getRedPos()));
+
+        while (!greenlightFinder.ImageContainsGreenLight(new Mat(frontCamera.Capture(),belowRedLight))){
             System.out.println("waiting for Greenlight");
             try {
                 Thread.sleep(100);
