@@ -115,6 +115,7 @@ public class Application {
 
                 redBarImages[0] = foundImage;
             }
+            System.gc();
         }
 
         Mat[] matrixesToEvaluate = new Mat[numberOfImagesToTake -1];
@@ -203,18 +204,18 @@ public class Application {
 
         Calendar calendar = Calendar.getInstance();
         String currentDateAsString = String.format("%tY%te%td%tl%tm", calendar, calendar, calendar, calendar, calendar);
-        String folderBasePath = "~/Images/" + currentDateAsString;
+        String folderBasePath = "/home/pi/Images/" + currentDateAsString;
 
-        if (!Files.notExists(Paths.get(folderBasePath))) {
+        if (Files.notExists(Paths.get(folderBasePath))) {
             new File(folderBasePath).mkdirs();
         }
 
         for (int i = 0; i < matrixesToEvaluate.length; i++) {
             Mat mat = matrixesToEvaluate[i];
             MatToBufImg matToBufImg = new MatToBufImg();
-            matToBufImg.setMatrix(mat, "png");
+            matToBufImg.setMatrix(mat, ".png");
 
-            File outputfile = new File(folderBasePath + "/" + "Original" + String.format("%03d%n")+ ".png");
+            File outputfile = new File(folderBasePath + "/" + "Original" + String.format("%03d", i)+ ".png");
             try {
                 ImageIO.write(matToBufImg.getBufferedImage(), "png", outputfile);
                 System.out.println("Wrote File: " + outputfile.getAbsolutePath());
