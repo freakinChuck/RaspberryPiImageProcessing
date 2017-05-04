@@ -344,7 +344,7 @@ if(zahlenerkennung == 1)
 
            
             
-            else if(pitch < -1 || (!treppeUeberwundenUndFahertAuchWiederGeradeAus && pitch < 3.7))
+            else if(pitch < -1 || (!treppeUeberwundenUndFahertAuchWiederGeradeAus && pitch < 3))
             {
               
               Serial.print(" ,ist nach vorne gekippt ");
@@ -484,21 +484,21 @@ if(zahlenerkennung == 1)
                   
                     if(KURVEABGESCHLOSSEN == true)
                     {
-                      if((abstandVorne() == -1 || abstandVorne()<20 ) && yaw<-160 && TorKorrekrurNachLinks == false  ) // && yaw<-165    wurde entfernt
+                      if((abstandVorne() == -1 || abstandVorne()<20 ) && yaw<-160 )//&& TorKorrekrurNachLinks == false  ) // && yaw<-165    wurde entfernt
                       {
                     Serial.println("Kurve Fertig !!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                     setSpeedGeradeAusH();
                       }
-                      else{
-                        delay(2000);
-                        TorKorrekrurNachLinks = true;
+                      //else{
+                        //delay(2000);
+                       // TorKorrekrurNachLinks = true;
                        /* while((abstandVorne()==-1 || abstandVorne()<60)&& KeineKorrektur == false && abstandLinks()>30)
                         {
                         Serial.println("Fehler Tor Links");
                       fahreKurveNachRechts();
                       }*/
-                      KeineKorrektur = true;
-                    }
+                     // KeineKorrektur = true;
+                    //}
                   }
                     
 
