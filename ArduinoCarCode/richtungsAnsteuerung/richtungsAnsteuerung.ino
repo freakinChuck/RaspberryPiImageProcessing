@@ -179,7 +179,7 @@ if(zahlenerkennung == 1)
 
                   if(NACHVORNEGEKIPPT == false && NACHHINTENGEKIPPT == false && KURVEABGESCHLOSSEN == true)
                   {
-                   fahreKurveNachRechts();
+                   //fahreKurveNachRechts();
                   }
 
                  
@@ -243,25 +243,17 @@ if(zahlenerkennung == 1)
                 {
               faehrtEGeradeAus();
                 }
+                
                 else
                 {
-                  if(parcours == 0)
-                  {
+                  
                  if(abstandLinks()>25)
                   {
                   stopMotor();
                   }
-                  }
-                  else
-                  {
-
-                    if(abstandRechts()>25)
-                  {
-                  stopMotor();
-                  }
-                    
-                  }
-                }
+                  
+                  
+                }  //// N
                  
               }
               else if(yaw<-155)
@@ -389,33 +381,21 @@ if(zahlenerkennung == 1)
 
               if(treppeUeberwunden == true && KURVEABGESCHLOSSEN == false)
               {
-                if(test == 0)
-                {
-
-                 if(parcours == 0)
-                 {
-                  
+               
+                 
+                  if(test == 0)
+                  {
                 if(abstandLinks()> 30)
                 {
                   Kurvenloop = true;
                   test++;
                   delay(400);
                 }
-                 }
-                 else
-                 {
-
-                  if(abstandRechts()> 30)
-                {
-                  Kurvenloop = true;
-                  test++;
-                  delay(400);
-                }
-                  
-                 }
+                  }
+                 
                 
                 
-                }
+                
 
                 
                 if((Kurvenloop == true && KURVEABGESCHLOSSEN == false ) || KURVEEINLEITEN == true || SELBSTHALTUNG == true )
@@ -428,11 +408,10 @@ if(zahlenerkennung == 1)
                   }
 
 
-                  if(parcours == 0)
-                  {
+                  
 
                 if((yaw-startKurveOffset) > -90 && HALBEKURVEABGESCHLOSSEN == false) // war auf -85
-                {  
+                  {
                   KURVEEINLEITEN = true;
                  Serial.print("     Fahre Kurve !!!!!    ");
                   //while(getYAW() > -75 && HALBEKURVEABGESCHLOSSEN == false)
@@ -444,20 +423,8 @@ if(zahlenerkennung == 1)
                 
                 
                 }
-                  }
-                  else
-                  {
-                    
-                if((yaw-startKurveOffset) < 90 && HALBEKURVEABGESCHLOSSEN == false) // war auf -85
-                {  
-                  KURVEEINLEITEN = true;
-                 Serial.print("     Fahre Kurve !!!!!    ");
-                  //while(getYAW() > -75 && HALBEKURVEABGESCHLOSSEN == false)
-                  //{
-                fahreKurveNachRechts();
-                 // }
-                  }
                   
+                 
 
 
 
@@ -513,9 +480,7 @@ if(zahlenerkennung == 1)
                   {
                   
 
-                    if(parcours == 0)
-                    {
-
+                  
                   
                     if(KURVEABGESCHLOSSEN == true)
                     {
@@ -527,45 +492,21 @@ if(zahlenerkennung == 1)
                       else{
                         delay(2000);
                         TorKorrekrurNachLinks = true;
-                        while((abstandVorne()==-1 || abstandVorne()<60)&& KeineKorrektur == false && abstandLinks()>30)
+                       /* while((abstandVorne()==-1 || abstandVorne()<60)&& KeineKorrektur == false && abstandLinks()>30)
                         {
                         Serial.println("Fehler Tor Links");
                       fahreKurveNachRechts();
-                      }
+                      }*/
                       KeineKorrektur = true;
                     }
                   }
-                    }
-
-
-
-
                     
-                    else
-                    {
 
 
-                     if(KURVEABGESCHLOSSEN == true)
-                    {
-                      if((abstandVorne() == -1 || abstandVorne()<20 ) && yaw < 160 && TorKorrekrurNachLinks == false  ) // && yaw<-165    wurde entfernt
-                      {
-                    Serial.println("Kurve Fertig !!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-                    setSpeedGeradeAusH();
-                      }
-                     else{
-                        delay(2000);
-                        TorKorrekrurNachLinks = true;
-                        while((abstandVorne()==-1 || abstandVorne()<60)&& KeineKorrektur == false && abstandLinks()>30)
-                        {
-                        Serial.println("Fehler Tor Links");
-                      fahreKurveNachRechts();
-                      }
-                      KeineKorrektur = true;
-                    }
-                  }
 
-                      
-                    }
+                  //**************************************************************************************************************************
+                    
+                   
                     
 
 
@@ -576,8 +517,7 @@ if(zahlenerkennung == 1)
               
             }
             }
-            }
-            
+                        
 
             
             
@@ -608,7 +548,7 @@ if(zahlenerkennung == 1)
         // blink LED to indicate activity
         blinkState = !blinkState;
         digitalWrite(LED_PIN, blinkState);
-    }
+    }  //***************************************************** Ende Loop sollte nicht da sein
 
      if(softwareReset==0)
   {
