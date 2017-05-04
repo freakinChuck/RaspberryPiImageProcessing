@@ -29,6 +29,8 @@ int softwareReset = 0;
 int myOffset = 0;
 int startKurveOffset = 0;
 int test = 0;
+boolean treppeUeberwundenUndFahertAuchWiederGeradeAus = false;
+
 
 
 
@@ -239,7 +241,10 @@ void loop() {
 				{
 					if (abstandLinks()>25)
 					{
+          while(1)
+          {
 						stopMotor();
+          }
 					}
 				}
 
@@ -321,7 +326,8 @@ void loop() {
 				faehrtUeberVerschraenkung();
 			}
 		}
-		else if (pitch < -1)
+		else if(pitch < -1 || (!treppeUeberwundenUndFahertAuchWiederGeradeAus && pitch < 3.2))
+
 		{
 
 			Serial.print(" ,ist nach vorne gekippt ");
@@ -344,6 +350,9 @@ void loop() {
 			Serial.print("  ");
 			NACHVORNEGEKIPPT = false;
 			NACHHINTENGEKIPPT = false;
+            if (treppeUeberwunden){
+                treppeUeberwundenUndFahertAuchWiederGeradeAus = true;
+              }
 
 			//getDistanz2 ist Sensor auf der Seite
 
