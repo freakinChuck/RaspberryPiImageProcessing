@@ -13,7 +13,7 @@ int enB = 8;
 int in3 = 10;
 int in4 = 9;
 
-int speedGeradeAus = 100;
+int speedGeradeAus = 55;
 int speedKurve = 100;
 
 
@@ -37,6 +37,8 @@ void setSpeedGeradeAusL()
 {
   speedGeradeAus = 65;
 }
+
+
 
 
 void setSpeedGeradeAusLL()
