@@ -8,6 +8,8 @@ int zahlenerkennung = 0;   //Zahlenerkennung ausgeschaltet = 0, eingeschaltet = 
 
 
 boolean STARTerfolgreich = true;
+boolean ResetLtreppe1 = false;
+boolean ResetLtreppe2 = false;
 boolean EndeParcours = false;
 boolean Kurvenloop = false;
 boolean KeineKorrektur = false;
@@ -29,6 +31,7 @@ int softwareReset = 0;
 int myOffset = 0;
 int startKurveOffset = 0;
 int test = 0;
+boolean treppeUeberwundenUndFahertAuchWiederGeradeAus = false;
 
 
 
@@ -128,7 +131,7 @@ if(zahlenerkennung == 1)
         // track FIFO count here in case there is > 1 packet available
         // (this lets us immediately read more without waiting for an interrupt)
         fifoCount -= packetSize;
-
+    
 
 
         #ifdef OUTPUT_READABLE_YAWPITCHROLL
@@ -170,9 +173,16 @@ if(zahlenerkennung == 1)
                  
                         
               }
-              else if(yaw>140)
+              else if(yaw>155)
               {
                  Serial.print("faehrt in die entgegengesetzte Richtung nach links");
+
+                  if(NACHVORNEGEKIPPT == false && NACHHINTENGEKIPPT == false && KURVEABGESCHLOSSEN == true)
+                  {
+                   fahreKurveNachRechts();
+                  }
+
+                 
               }
               else if(yaw > 120)
               {
@@ -217,6 +227,8 @@ if(zahlenerkennung == 1)
               Serial.print( yaw );
               
             }
+
+            
             else if(yaw<0)
             {
               if(yaw<-165)
@@ -233,20 +245,40 @@ if(zahlenerkennung == 1)
                 }
                 else
                 {
+                  if(parcours == 0)
+                  {
                  if(abstandLinks()>25)
                   {
                   stopMotor();
                   }
+                  }
+                  else
+                  {
+
+                    if(abstandRechts()>25)
+                  {
+                  stopMotor();
+                  }
+                    
+                  }
                 }
                  
               }
-              else if(yaw<-140)
+              else if(yaw<-155)
               {
                 Serial.print("faehrt in die entgegengesetzte Richtung nach rechts ");
+
+                  if(NACHVORNEGEKIPPT == false && NACHHINTENGEKIPPT == false && KURVEABGESCHLOSSEN == true)
+                  {
+                   fahreKurveNachLinks();
+                  }
+                
               }
               else if(yaw<-120)
               {
                 Serial.print("faehrt in die entgegengesetzte Richtung stark nach rechts ");
+
+                 
               }
               else if(yaw<-60)
               {
@@ -317,12 +349,16 @@ if(zahlenerkennung == 1)
                 faehrtUeberVerschraenkung();            
               }
             }
-            else if(pitch < -1)
+
+           
+            
+            else if(pitch < -1 || (!treppeUeberwundenUndFahertAuchWiederGeradeAus && pitch < 3.7))
             {
               
               Serial.print(" ,ist nach vorne gekippt ");
               if(KURVEABGESCHLOSSEN == false)
               {
+                
             nachVorneGekippt();
             treppeUeberwunden = true;
             NACHVORNEGEKIPPT = true;
@@ -331,28 +367,53 @@ if(zahlenerkennung == 1)
               }
               else
               {
+
+
+               
+              
                 
                   EndeParcours = true;
                 
               }
             }
-            else{
+            else{                          //****************************************************************************************************
               Serial.print("  ");
               NACHVORNEGEKIPPT = false;
               NACHHINTENGEKIPPT = false;
 
+
+              if (treppeUeberwunden){
+                treppeUeberwundenUndFahertAuchWiederGeradeAus = true;
+              }
               //getDistanz2 ist Sensor auf der Seite
 
               if(treppeUeberwunden == true && KURVEABGESCHLOSSEN == false)
               {
                 if(test == 0)
                 {
+
+                 if(parcours == 0)
+                 {
+                  
                 if(abstandLinks()> 30)
                 {
                   Kurvenloop = true;
                   test++;
                   delay(400);
                 }
+                 }
+                 else
+                 {
+
+                  if(abstandRechts()> 30)
+                {
+                  Kurvenloop = true;
+                  test++;
+                  delay(400);
+                }
+                  
+                 }
+                
                 
                 }
 
@@ -365,7 +426,10 @@ if(zahlenerkennung == 1)
                     startKurveOffset = 0;//getYAW();
                     offsetDone = true;
                   }
-                  
+
+
+                  if(parcours == 0)
+                  {
 
                 if((yaw-startKurveOffset) > -90 && HALBEKURVEABGESCHLOSSEN == false) // war auf -85
                 {  
@@ -380,6 +444,24 @@ if(zahlenerkennung == 1)
                 
                 
                 }
+                  }
+                  else
+                  {
+                    
+                if((yaw-startKurveOffset) < 90 && HALBEKURVEABGESCHLOSSEN == false) // war auf -85
+                {  
+                  KURVEEINLEITEN = true;
+                 Serial.print("     Fahre Kurve !!!!!    ");
+                  //while(getYAW() > -75 && HALBEKURVEABGESCHLOSSEN == false)
+                  //{
+                fahreKurveNachRechts();
+                 // }
+                  }
+                  
+
+
+
+                
                  else 
                 {
                    
@@ -424,11 +506,17 @@ if(zahlenerkennung == 1)
                 }
                
                 
-               
+                }
                 
-              } // Treppe Überwunden aktiviert
+               // Treppe Überwunden aktiviert
               else
                   {
+                  
+
+                    if(parcours == 0)
+                    {
+
+                  
                     if(KURVEABGESCHLOSSEN == true)
                     {
                       if((abstandVorne() == -1 || abstandVorne()<20 ) && yaw<-160 && TorKorrekrurNachLinks == false  ) // && yaw<-165    wurde entfernt
@@ -436,7 +524,7 @@ if(zahlenerkennung == 1)
                     Serial.println("Kurve Fertig !!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                     setSpeedGeradeAusH();
                       }
-                     /* else{
+                      else{
                         delay(2000);
                         TorKorrekrurNachLinks = true;
                         while((abstandVorne()==-1 || abstandVorne()<60)&& KeineKorrektur == false && abstandLinks()>30)
@@ -445,12 +533,53 @@ if(zahlenerkennung == 1)
                       fahreKurveNachRechts();
                       }
                       KeineKorrektur = true;
-                    }*/
+                    }
                   }
+                    }
+
+
+
+
+                    
+                    else
+                    {
+
+
+                     if(KURVEABGESCHLOSSEN == true)
+                    {
+                      if((abstandVorne() == -1 || abstandVorne()<20 ) && yaw < 160 && TorKorrekrurNachLinks == false  ) // && yaw<-165    wurde entfernt
+                      {
+                    Serial.println("Kurve Fertig !!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                    setSpeedGeradeAusH();
+                      }
+                     else{
+                        delay(2000);
+                        TorKorrekrurNachLinks = true;
+                        while((abstandVorne()==-1 || abstandVorne()<60)&& KeineKorrektur == false && abstandLinks()>30)
+                        {
+                        Serial.println("Fehler Tor Links");
+                      fahreKurveNachRechts();
+                      }
+                      KeineKorrektur = true;
+                    }
+                  }
+
+                      
+                    }
+                    
+
+
+
+
+                  
 
               
             }
             }
+            }
+            
+
+            
             
             
             if(roll > 20)
