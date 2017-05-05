@@ -18,10 +18,6 @@ import java.io.FileOutputStream;
 public class GreenlightFinder {
     public boolean ImageContainsGreenLight(Mat frame){
         try {
-            //MatOfByte mem = new MatOfByte();
-            //Imgcodecs.imencode(".bmp", frame, mem);
-            //Image im = ImageIO.read(new ByteArrayInputStream(mem.toArray()));
-            //BufferedImage buff = (BufferedImage) im;
             // Convert image to HSV
             Mat hsv_image = new Mat();
             Imgproc.cvtColor(frame, hsv_image, Imgproc.COLOR_BGR2HSV);

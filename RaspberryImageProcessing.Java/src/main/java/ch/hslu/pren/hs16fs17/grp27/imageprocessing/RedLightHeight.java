@@ -17,10 +17,6 @@ public class RedLightHeight {
     }
     public boolean FindRedLightHeight(Mat frame){
         try {
-            //MatOfByte mem = new MatOfByte();
-            //Imgcodecs.imencode(".bmp", frame, mem);
-            //Image im = ImageIO.read(new ByteArrayInputStream(mem.toArray()));
-            //BufferedImage buff = (BufferedImage) im;
             // Convert image to HSV
             Mat hsv_image_red = new Mat();
             Imgproc.cvtColor(frame, hsv_image_red, Imgproc.COLOR_BGR2HSV);
