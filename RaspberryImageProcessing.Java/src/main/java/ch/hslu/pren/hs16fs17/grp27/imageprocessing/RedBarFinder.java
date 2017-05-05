@@ -54,7 +54,7 @@ public class RedBarFinder {
                 // draw enclosing rectangle (all same color, but you could use variable i to make them unique)
                 barCount++;
                 //System.out.print("x: " + rect.x + " y: "+rect.y+ " h: " + rect.height + " w: " + rect.width + "\n");
-                Imgproc.rectangle(matToProcess, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height), new Scalar(255, 0, 0, 255), 3);
+                //Imgproc.rectangle(matToProcess, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height), new Scalar(255, 0, 0, 255), 3);
                 foundRectangles.add(rect);
             }
 

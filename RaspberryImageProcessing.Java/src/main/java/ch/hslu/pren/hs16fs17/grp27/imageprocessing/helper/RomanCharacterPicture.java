@@ -1,15 +1,13 @@
 package ch.hslu.pren.hs16fs17.grp27.imageprocessing.helper;
 
 
-import java.awt.image.BufferedImage;
-import java.io.FileOutputStream;
-import java.util.List;
-import javax.imageio.ImageIO;
 import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract;
-import org.opencv.core.Mat;
 import org.opencv.core.*;
-import org.opencv.imgproc.*;
+import org.opencv.imgproc.Imgproc;
+
+import java.awt.image.BufferedImage;
+import java.util.List;
 
 /**
  *
@@ -20,6 +18,8 @@ public class RomanCharacterPicture {
     private Mat webcam_image;
     private RectangleCoordinates leftRectangle;
     private RectangleCoordinates rightRectangle;
+    private ITesseract tesseract = new Tesseract();
+
 
     public RomanCharacterPicture(Mat webcam_image, List<Rect> foundRectangles){
         this.webcam_image = webcam_image;
@@ -34,9 +34,8 @@ public class RomanCharacterPicture {
 
     public int evaluatePicture(){
         try{
-            ITesseract tesseract = new Tesseract();
-
             tesseract.setDatapath(System.getenv("TESSDATA_PREFIX"));
+            tesseract.setTessVariable("tessedit_char_whitelist", "IV");
 
             Rect rect = new Rect(leftRectangle.getxPos(),leftRectangle.getyPos(),(rightRectangle.getxPos() - leftRectangle.getxPos()),(rightRectangle.getyPos() - leftRectangle.getyPos()));
             Mat subImageMat = webcam_image.submat(rect);
@@ -52,7 +51,6 @@ public class RomanCharacterPicture {
 
             Mat black_hue_image = new Mat();
             Core.addWeighted(lower_black_hue_range, 1.0, upper_black_hue_range, 1.0, 0.0, black_hue_image);
-
             Imgproc.GaussianBlur(black_hue_image, black_hue_image, new Size(9, 9), 2, 2);
 
             //Invert black to white
@@ -62,10 +60,7 @@ public class RomanCharacterPicture {
 
             whiteImageBuff.setMatrix(white_hue_image, ".jpg");
             BufferedImage inputOCRimage = whiteImageBuff.getBufferedImage();
-            //instance.setTessVariable("tessedit_char_whitelist", "iv");
-            //instance.setTessVariable("tessedit_char_blacklist", "qwertzuopasdfghjkyxcbnm");
             String result = tesseract.doOCR(inputOCRimage).trim();
-
             //--> Convert the OCR string to roman chars.
             boolean halfV = false;
             int forEachCharI = 0;
@@ -123,15 +118,10 @@ public class RomanCharacterPicture {
                         break;
                 }
             }
-
             int counter = 0;
             counter = (forEachCharI+forEachCharV);
-            ImageIO.write(inputOCRimage, "JPG", new FileOutputStream(System.currentTimeMillis()+"__"+counter+".jpg"));
-
             //System.out.println("All chars:" + result + " --> " + counter + "\n");
-
             return(counter);
-
         }catch(Exception ex){
             System.err.println(ex.toString());
             return 0;

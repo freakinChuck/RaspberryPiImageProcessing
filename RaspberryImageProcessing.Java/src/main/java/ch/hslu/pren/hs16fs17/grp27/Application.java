@@ -201,7 +201,7 @@ public class Application {
 
 
         PrintNumberInConsole(maxKey, maxNumbers, objects.length);
-
+        /*
         Calendar calendar = Calendar.getInstance();
         String currentDateAsString = String.format("%tY%te%td%tl%tm", calendar, calendar, calendar, calendar, calendar);
         String folderBasePath = "/home/pi/Images/" + currentDateAsString;
@@ -225,7 +225,8 @@ public class Application {
             }
 
         }
-
+        System.out.println("File write done");
+        */
         //Thread.sleep(10000);
 
     }

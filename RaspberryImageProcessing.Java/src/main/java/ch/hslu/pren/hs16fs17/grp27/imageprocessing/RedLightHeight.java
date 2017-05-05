@@ -1,16 +1,10 @@
 package ch.hslu.pren.hs16fs17.grp27.imageprocessing;
 
-import ch.hslu.pren.hs16fs17.grp27.imageprocessing.helper.MatToBufImg;
-import org.opencv.core.*;
-import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.core.Core;
+import org.opencv.core.Mat;
+import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
-
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.Point;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.FileOutputStream;
 
 /**
  * Created by silvio on 23.03.17.
@@ -23,10 +17,10 @@ public class RedLightHeight {
     }
     public boolean FindRedLightHeight(Mat frame){
         try {
-            MatOfByte mem = new MatOfByte();
-            Imgcodecs.imencode(".bmp", frame, mem);
-            Image im = ImageIO.read(new ByteArrayInputStream(mem.toArray()));
-            BufferedImage buff = (BufferedImage) im;
+            //MatOfByte mem = new MatOfByte();
+            //Imgcodecs.imencode(".bmp", frame, mem);
+            //Image im = ImageIO.read(new ByteArrayInputStream(mem.toArray()));
+            //BufferedImage buff = (BufferedImage) im;
             // Convert image to HSV
             Mat hsv_image_red = new Mat();
             Imgproc.cvtColor(frame, hsv_image_red, Imgproc.COLOR_BGR2HSV);
