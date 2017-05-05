@@ -23,10 +23,15 @@ boolean KURVEABGESCHLOSSEN = false;
 boolean TorKorrekrurNachLinks = false;
 boolean  geradeAus = false;
 boolean offsetDone = false;
+boolean leichtNachHintenGekippt = false;
 int messung = 0;
 int erkanntezahl = 0;
 int softwareReset = 0;
-int myOffset = 0;
+int yawOffset = 0;
+int pitchOffset = 0;
+int rollOffset = 0;
+boolean mpuOffsetDone = false;
+
 int startKurveOffset = 0;
 int test = 0;
 boolean treppeUeberwundenUndFahertAuchWiederGeradeAus = false;
@@ -140,10 +145,10 @@ void loop() {
 		mpu.dmpGetGravity(&gravity, &q);
 		mpu.dmpGetYawPitchRoll(ypr, &q, &gravity);
 
-		float yaw = ((ypr[0] * 180) / M_PI) - myOffset;
+		float yaw = ((ypr[0] * 180) / M_PI) - yawOffset;
 		//float yawGefiltert = yaw -yawKalibriert;
-		float pitch = (ypr[1] * 180) / M_PI;
-		float roll = (ypr[2] * 180) / M_PI;
+		float pitch = ((ypr[1] * 180) / M_PI);// -pitchOffset;
+		float roll = ((ypr[2] * 180) / M_PI);//-rollOffset;
 		//Serial.print("yaw\t");
 		Serial.print("Das Fahrzeug  ");
 
@@ -318,25 +323,28 @@ void loop() {
 
 
 		}
-		else if (pitch > 10)
+		else if (pitch > 9)
 		{
 			Serial.print(" ,ist leicht nach hinten gekippt  ");
+     leichtNachHintenGekippt = true;
 			if (treppeUeberwunden == true && KURVEABGESCHLOSSEN == false)
 			{
 				faehrtUeberVerschraenkung();
 			}
 		}
-		else if(pitch < -1 || (!treppeUeberwundenUndFahertAuchWiederGeradeAus && pitch < 3.2))
+		else if(pitch < -1 || (!treppeUeberwundenUndFahertAuchWiederGeradeAus && pitch < 3.5))
 
 		{
 
 			Serial.print(" ,ist nach vorne gekippt ");
+      leichtNachHintenGekippt = false;
 			if (KURVEABGESCHLOSSEN == false)
 			{
 				nachVorneGekippt();
 				treppeUeberwunden = true;
 				NACHVORNEGEKIPPT = true;
 				NACHHINTENGEKIPPT = false;
+        
 				setSpeedGeradeAusH();
 			}
 			else
@@ -350,13 +358,14 @@ void loop() {
 			Serial.print("  ");
 			NACHVORNEGEKIPPT = false;
 			NACHHINTENGEKIPPT = false;
+      leichtNachHintenGekippt = false;
             if (treppeUeberwunden){
                 treppeUeberwundenUndFahertAuchWiederGeradeAus = true;
               }
 
 			//getDistanz2 ist Sensor auf der Seite
 
-			if (treppeUeberwunden == true && KURVEABGESCHLOSSEN == false)
+			if (treppeUeberwunden == true && KURVEABGESCHLOSSEN == false && leichtNachHintenGekippt == false)
 			{
 				if (test == 0)
 				{
@@ -500,16 +509,17 @@ void loop() {
 
 	if (softwareReset == 0)
 	{
-		if (geradeAus == false)
-		{
+		
 			//wdt_enable(WDTO_1S); 
 			softwareReset = 1;
 			//mpu.resetFIFO();
 			STARTerfolgreich = false;
-			myOffset = getYAW();
+			yawOffset = getYAW();
+     pitchOffset = getPITCH();
+     rollOffset = getROLL();
 			Serial.println(softwareReset);
 
-		}
+		
 	}
 
 
@@ -520,6 +530,18 @@ void loop() {
 
 int getYAW()
 {
-	return (int)(((ypr[0] * 180) / M_PI) - myOffset);
+	return (int)(((ypr[0] * 180) / M_PI) - yawOffset);
 }
+
+int getPITCH()
+{
+  return (int)(((ypr[1] * 180) / M_PI) - pitchOffset);
+}
+
+int getROLL()
+{
+  return (int)(((ypr[2] * 180) / M_PI) - rollOffset);
+}
+
+
 

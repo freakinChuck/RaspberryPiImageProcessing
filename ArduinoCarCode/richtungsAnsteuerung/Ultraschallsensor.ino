@@ -23,8 +23,8 @@
 #define echoPin2 4 // Echo Pin
 #define trigPin2 5 // Trigger Pin
 
-#define echoPin3 23
-#define trigPin3 22
+#define echoPin3 13
+#define trigPin3 8
 
 
 
