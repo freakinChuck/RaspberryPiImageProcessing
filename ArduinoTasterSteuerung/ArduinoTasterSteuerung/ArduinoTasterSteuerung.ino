@@ -40,13 +40,13 @@ void setup() {
        steps = -(steps / (360/schritteProUmdrehung)); 
        }            
     steps = round(steps); 
+    Serial.print(steps);
     return steps;
+    
   }
-  
-void loop() {
-  
-  if (i>=1) {
-  switch (romanNumber){
+
+  int moveMotor (int romanNumber, int abstandVorhanden){
+      switch (romanNumber){
     case 1: 
         gerechneterAbstand = abstandEins-155-abstandVorhanden;
         myStepper.step(calculateSteps(gerechneterAbstand));  // Je nach Parcourseite muss 155mm oder 65mm angepasst werden
@@ -70,16 +70,9 @@ void loop() {
        myStepper.step(calculateSteps(gerechneterAbstand));
   
     break;
-    
-    }
-    Serial.print(i);
-    i=i-1;
-    }
     delay(4000);
-    digitalWrite(8, LOW);
-    digitalWrite(9, LOW);
-    digitalWrite(12, LOW);
-    digitalWrite(13, LOW);
-    
-  
+    }}
+ 
+void loop() {
+moveMotor(romanNumber,abstandVorhanden); 
 }
