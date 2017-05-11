@@ -2,6 +2,8 @@
 #include <avr/io.h> 
 #include <avr/wdt.h>
 
+#include <SoftwareSerial.h>
+
 int parcours = 0; //0 = Parcours rechts    1 = Parcours Links
 int ampelerkennung = 0;    //Ampelerkennung ausgeschaltet = 0, eingeschaltet = 1
 int zahlenerkennung = 0;   //Zahlenerkennung ausgeschaltet = 0, eingeschaltet = 1
@@ -51,6 +53,7 @@ TCCR0B = _BV(CS00) | _BV(CS02);  //1024
   motorSetup();
   ultraschallSetup();
   ampelSetup();
+  bluetoothSetup();
      
 
 
@@ -498,6 +501,7 @@ if(zahlenerkennung == 1)
   
   Serial.print(  "softwareReset: ");
   Serial.println(   softwareReset);
+   bluetotthPrint() ;
 
 }
 

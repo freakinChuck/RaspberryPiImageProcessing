@@ -15,6 +15,7 @@ void mpuSetup()
     
     
     Serial.begin(115200);
+    //BTserial.begin(115200); 
     while (!Serial); // wait for Leonardo enumeration, others continue immediately
 
     
