@@ -2,6 +2,8 @@
 #include <avr/io.h> 
 #include <avr/wdt.h>
 
+#include <SoftwareSerial.h>
+
 int parcours = 0; //0 = Parcours rechts    1 = Parcours Links
 int ampelerkennung = 0;    //Ampelerkennung ausgeschaltet = 0, eingeschaltet = 1
 int zahlenerkennung = 0;   //Zahlenerkennung ausgeschaltet = 0, eingeschaltet = 1
@@ -42,6 +44,26 @@ boolean treppeUeberwundenUndFahertAuchWiederGeradeAus = false;
 
 
 void setup() {
+<<<<<<< HEAD
+/*
+TCCR0B = _BV(CS00);              //1
+TCCR0B = _BV(CS01);              //8
+TCCR0B = _BV(CS00) | _BV(CS01);  //64
+TCCR0B = _BV(CS02);              //256
+TCCR0B = _BV(CS00) | _BV(CS02);  //1024
+
+  TCCR2B = (TCCR2B & 0b11111000) | 0x04; //PWM Frequenz für pin 9 und 10  f = 490.20Hz               ****************** Achtung kann Werte von delay() verändern !!! Kontrolle bei Ultraschallsensoren ******************
+  TCCR1B = (TCCR1B & 0b11111000) | 0x04; //PWM Frequenz für pin 11 und 12 f = 490.20Hz
+  */
+  
+  mpuSetup();
+  zahlenSetup();
+  motorSetup();
+  ultraschallSetup();
+  ampelSetup();
+  bluetoothSetup();
+     
+=======
 	/*
 	TCCR0B = _BV(CS00);              //1
 	TCCR0B = _BV(CS01);              //8
@@ -59,6 +81,7 @@ void setup() {
 	ultraschallSetup();
 	ampelSetup();
 
+>>>>>>> 7305e06236a58f534d27e5a0f9ab30d51b3d561a
 
 
 }
@@ -362,6 +385,263 @@ void loop() {
             if (treppeUeberwunden){
                 treppeUeberwundenUndFahertAuchWiederGeradeAus = true;
               }
+<<<<<<< HEAD
+              else if(yaw<-120)
+              {
+                Serial.print("faehrt in die entgegengesetzte Richtung stark nach rechts ");
+              }
+              else if(yaw<-60)
+              {
+                Serial.print("wechselt die Richtung ");
+              }
+              else if(yaw<-40)
+              {
+                Serial.print("faehrt stark nach links ");
+              }
+              else if(yaw<-20) // war vorher auf 20
+              {
+                Serial.print("faehrt  nach links ");
+                 
+                
+
+                  
+                  if(NACHVORNEGEKIPPT == false && NACHHINTENGEKIPPT == false && KURVEEINLEITEN == false && KURVEABGESCHLOSSEN==false)
+                  {
+                                   
+                 // faehrtNachLinks();
+                  }      
+ 
+                         
+                  
+                
+              }
+              else if(yaw <= 0)
+              {
+                Serial.print("faehrt gerade aus ");
+                
+                if(KURVEEINLEITEN == false)
+                {
+                  faehrtGeradeAus();
+                  geradeAus = true;
+                 
+                }
+                                                 // Achtung hier kann es vlt nicht funktionieren
+              }
+              Serial.print( yaw );
+              
+            }
+
+            
+           
+            if(pitch > 15)
+            {
+              
+              Serial.print(" ,ist nach hinten gekippt  ");
+              
+              nachHintenGekippt();
+              NACHHINTENGEKIPPT = true;
+              if(KURVEABGESCHLOSSEN == false)
+              {
+              setSpeedGeradeAusL();
+              }
+              
+              
+              NACHVORNEGEKIPPT = false;
+              
+              
+              
+            }
+            else if(pitch > 10)
+            {
+              Serial.print(" ,ist leicht nach hinten gekippt  ");
+              if( treppeUeberwunden == true && KURVEABGESCHLOSSEN==false)
+              {
+                faehrtUeberVerschraenkung();            
+              }
+            }
+            else if(pitch < -1)
+            {
+              
+              Serial.print(" ,ist nach vorne gekippt ");
+              if(KURVEABGESCHLOSSEN == false)
+              {
+            nachVorneGekippt();
+            treppeUeberwunden = true;
+            NACHVORNEGEKIPPT = true;
+            NACHHINTENGEKIPPT = false;
+            setSpeedGeradeAusH();
+              }
+              else
+              {
+                
+                  EndeParcours = true;
+                
+              }
+            }
+            else{
+              Serial.print("  ");
+              NACHVORNEGEKIPPT = false;
+              NACHHINTENGEKIPPT = false;
+
+              //getDistanz2 ist Sensor auf der Seite
+
+              if(treppeUeberwunden == true && KURVEABGESCHLOSSEN == false)
+              {
+                if(test == 0)
+                {
+                if(abstandLinks()> 30)
+                {
+                  Kurvenloop = true;
+                  test++;
+                  delay(400);
+                }
+                
+                }
+
+                
+                if((Kurvenloop == true && KURVEABGESCHLOSSEN == false ) || KURVEEINLEITEN == true || SELBSTHALTUNG == true )
+                {
+                  SELBSTHALTUNG = true;
+                  if(offsetDone == false)
+                  {
+                    startKurveOffset = 0;//getYAW();
+                    offsetDone = true;
+                  }
+                  
+
+                if((yaw-startKurveOffset) > -90 && HALBEKURVEABGESCHLOSSEN == false) // war auf -85
+                {  
+                  KURVEEINLEITEN = true;
+                 Serial.print("     Fahre Kurve !!!!!    ");
+                  //while(getYAW() > -75 && HALBEKURVEABGESCHLOSSEN == false)
+                  //{
+                fahreKurveNachLinks();
+                 // }
+               
+                //fahreKurveNachRechts();
+                
+                
+                }
+                 else 
+                {
+                   
+                KURVEEINLEITEN = false;
+                if((abstandVorne()> 14||abstandVorne()== -1) && KURVEBEENDEN == false){ //war vorher auf 20
+                  //delay(2000);
+                  
+                  while((abstandVorne()> 14||abstandVorne()== -1)){ //war vorher auf 20
+                    setSpeedGeradeAusLL();
+                    faehrtGeradeAus();
+                    
+                    
+                    HALBEKURVEABGESCHLOSSEN = true;
+                    Serial.println("     Fahre Gerade aus !!!!!    ");
+                  }
+                  
+                 
+                  
+                }else if (KURVEABGESCHLOSSEN == false){
+                  //while(getYAW()>-160/*KURVEABGESCHLOSSEN == false*/){
+                  KURVEBEENDEN = true;
+                  fahreKurveNachLinks();
+                   Serial.println("     Kurve beendennnnnnnn !!!!!    ");
+                 // }
+                  
+                  }
+                 
+                
+                  
+                }
+                
+                if( HALBEKURVEABGESCHLOSSEN == true)
+                {
+                  
+                }
+                
+
+
+                
+                
+                  
+                }
+               
+                
+               
+                
+              } // Treppe Überwunden aktiviert
+              else
+                  {
+                    if(KURVEABGESCHLOSSEN == true)
+                    {
+                      if((abstandVorne() == -1 || abstandVorne()<20 ) && yaw<-160 && TorKorrekrurNachLinks == false  ) // && yaw<-165    wurde entfernt
+                      {
+                    Serial.println("Kurve Fertig !!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                    setSpeedGeradeAusH();
+                      }
+                     /* else{
+                        delay(2000);
+                        TorKorrekrurNachLinks = true;
+                        while((abstandVorne()==-1 || abstandVorne()<60)&& KeineKorrektur == false && abstandLinks()>30)
+                        {
+                        Serial.println("Fehler Tor Links");
+                      fahreKurveNachRechts();
+                      }
+                      KeineKorrektur = true;
+                    }*/
+                  }
+
+              
+            }
+            }
+            
+            
+            if(roll > 20)
+            {
+              
+              Serial.println(" und nach rechtsgekippt  ");
+              VERSCHRAENKUNG = true;
+            }
+            else if(roll < -20)
+            {
+              Serial.println(" und nach linksgekippt  ");
+              VERSCHRAENKUNG = true;
+            }
+            else{
+             Serial.println(" ");
+            
+               
+            }
+            Serial.print(" erkannte Zahl : ");
+            Serial.println(erkanntezahl);
+            
+        #endif
+
+
+
+        // blink LED to indicate activity
+        blinkState = !blinkState;
+        digitalWrite(LED_PIN, blinkState);
+    }
+
+     if(softwareReset==0)
+  {
+  if(geradeAus == false)
+  {
+     //wdt_enable(WDTO_1S); 
+     softwareReset = 1;
+     //mpu.resetFIFO();
+     STARTerfolgreich = false;
+     myOffset = getYAW();
+     Serial.println(   softwareReset);
+     
+  }
+  }
+
+  
+  Serial.print(  "softwareReset: ");
+  Serial.println(   softwareReset);
+   bluetotthPrint() ;
+=======
 
 			//getDistanz2 ist Sensor auf der Seite
 
@@ -525,6 +805,7 @@ void loop() {
 
 	Serial.print("softwareReset: ");
 	Serial.println(softwareReset);
+>>>>>>> 7305e06236a58f534d27e5a0f9ab30d51b3d561a
 
 }
 
