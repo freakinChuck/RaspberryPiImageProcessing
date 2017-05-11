@@ -23,11 +23,16 @@
 #define echoPin2 4 // Echo Pin
 #define trigPin2 5 // Trigger Pin
 
+#define echoPin3 13
+#define trigPin3 8
+
+
+
 
 
 int maximumRange = 105; // Maximum range needed
 int minimumRange = 0; // Minimum range needed
-long duration, duration2, distance2, distance; // Duration used to calculate distance
+long duration, duration2,duration3, distance3, distance2, distance; // Duration used to calculate distance
 
 void ultraschallSetup() {
   //Serial.begin (115200);
@@ -110,6 +115,42 @@ int abstandLinks() {
 
 int distanz2 = (int)(distance2);
  return distanz2;
+}
+int abstandRechts() {
+/* The following trigPin/echoPin cycle is used to determine the
+ distance of the nearest object by bouncing soundwaves off of it. */ 
+ digitalWrite(trigPin3, LOW); 
+ delayMicroseconds(2); 
+
+ digitalWrite(trigPin3, HIGH);
+ delayMicroseconds(10); 
+ 
+ digitalWrite(trigPin3, LOW);
+ duration3 = pulseIn(echoPin3, HIGH);
+ 
+ //Calculate the distance (in cm) based on the speed of sound.
+ distance3 = duration2/58.2;
+ 
+ if (distance3 >= maximumRange || distance3 <= minimumRange){
+ /* Send a negative number to computer and Turn LED ON 
+ to indicate "out of range" */
+ Serial.println("-1");
+ digitalWrite(LEDPin, HIGH); 
+ }
+ else {
+ /* Send the distance to the computer using Serial protocol, and
+ turn LED OFF to indicate successful reading. */
+ 
+ Serial.print(" Abstand Rechts: ");
+ Serial.println(distance3);
+ digitalWrite(LEDPin, LOW); 
+ }
+ 
+ //Delay 50ms before next reading.
+ //delay(50);
+
+int distanz3 = (int)(distance3);
+ return distanz3;
 }
 
 
