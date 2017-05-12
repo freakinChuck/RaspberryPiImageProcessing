@@ -45,7 +45,7 @@ void setup() {
     
   }
 
-  int moveMotor (int romanNumber, int abstandVorhanden){
+  int moveMotor (){
       switch (romanNumber){
     case 1: 
         gerechneterAbstand = abstandEins-155-abstandVorhanden;
@@ -74,5 +74,5 @@ void setup() {
     }}
  
 void loop() {
-moveMotor(romanNumber,abstandVorhanden); 
+moveMotor(); 
 }
