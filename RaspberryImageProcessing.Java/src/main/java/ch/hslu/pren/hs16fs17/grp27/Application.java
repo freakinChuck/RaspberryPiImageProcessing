@@ -103,7 +103,7 @@ public class Application {
 
         boolean redBarFound = false;
 
-        final int numberOfImagesToTake = 10;
+        final int numberOfImagesToTake = 12;
 
         Image[] redBarImages = new Image[numberOfImagesToTake];
 
@@ -112,7 +112,6 @@ public class Application {
             Image foundImage = redBarFinder.FindRedDoubleBar(capturedImage);
             if (foundImage != null) {
                 System.out.println("Redbar found");
-
                 redBarImages[0] = foundImage;
             }
             System.gc();

@@ -18,8 +18,8 @@ public class RomanCharacterPicture {
     private Mat webcam_image;
     private RectangleCoordinates leftRectangle;
     private RectangleCoordinates rightRectangle;
-    private ITesseract tesseract = new Tesseract();
-
+    private TesseractInstance tessIns = new TesseractInstance();
+    private ITesseract tesseract = tessIns.getSingletonTesseract();
 
     public RomanCharacterPicture(Mat webcam_image, List<Rect> foundRectangles){
         this.webcam_image = webcam_image;
@@ -34,8 +34,6 @@ public class RomanCharacterPicture {
 
     public int evaluatePicture(){
         try{
-            tesseract.setDatapath(System.getenv("TESSDATA_PREFIX"));
-            tesseract.setTessVariable("tessedit_char_whitelist", "IV");
 
             Rect rect = new Rect(leftRectangle.getxPos(),leftRectangle.getyPos(),(rightRectangle.getxPos() - leftRectangle.getxPos()),(rightRectangle.getyPos() - leftRectangle.getyPos()));
             Mat subImageMat = webcam_image.submat(rect);
