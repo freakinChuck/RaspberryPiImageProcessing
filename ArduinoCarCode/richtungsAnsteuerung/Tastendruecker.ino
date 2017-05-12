@@ -4,9 +4,9 @@
 /* Mit dem Switch wird die Positon des Taster ausgerechnet. Mit der Funktion claculate Steps wird anschliessend ausgerechnet, wie viele Schritte der Stepper Motor machen muss
 */
 const int schritteProUmdrehung = 400;  // Anzahl Schritte des Stepper Motors
-int abstandVorhanden = -100; //gemessener Abstand durch Ultraschall
+int abstandVorhanden = 0; //gemessener Abstand durch Ultraschall
 int gerechneterAbstand = 0;
-int romanNumber = 1; //ausgelesene Römisch Zahl
+int romanNumber = 0; //ausgelesene Römisch Zahl
 
 int abstandFuenf = 135; // Absolut Koordinaten der Tasten
 int abstandVier = 195;
@@ -15,10 +15,20 @@ int abstandZwei = 315;
 int abstandEins = 375;
 int i=1;
 
-Stepper myStepper(schritteProUmdrehung, 40, 41, 42, 43); // Initialisierung Stepper
+Stepper myStepper(schritteProUmdrehung, 8, 9, 12, 13); // Initialisierung Stepper
+
+void setDisnatce(int distance)
+{
+  abstandVorhanden = distance;
+}
+
+void setNumber(int number)
+{
+  romanNumber = number;
+}
 
 
-void setup() {
+void tasterSetup() {
   // set the speed at 60 rpm:
   myStepper.setSpeed(60);
   Serial.begin(9600);  
@@ -50,7 +60,6 @@ void setup() {
     case 1: 
         gerechneterAbstand = abstandEins-155-abstandVorhanden;
         myStepper.step(calculateSteps(gerechneterAbstand));  // Je nach Parcourseite muss 155mm oder 65mm angepasst werden
-        Serial.println("Test .......................");
     break;
     case 2:
         gerechneterAbstand = abstandZwei-155+abstandVorhanden;
@@ -74,6 +83,6 @@ void setup() {
     delay(4000);
     }}
  
-void loop() {
-moveMotor(); 
-}
+//void loop() {
+//moveMotor(); 
+//}

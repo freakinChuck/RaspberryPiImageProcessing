@@ -26,7 +26,9 @@ boolean offsetDone = false;
 int messung = 0;
 int erkanntezahl = 0;
 int softwareReset = 0;
-int myOffset = 0;
+int myYAWOffset = 0;
+int myROLLOffset = 0;
+int myPITCHOffset = 0;
 int startKurveOffset = 0;
 int test = 0;
 
@@ -137,7 +139,7 @@ if(zahlenerkennung == 1)
             mpu.dmpGetGravity(&gravity, &q);
             mpu.dmpGetYawPitchRoll(ypr, &q, &gravity);
          
-            float yaw = ((ypr[0] * 180)/M_PI)-myOffset;            
+            float yaw = ((ypr[0] * 180)/M_PI)-myYAWOffset;            
             //float yawGefiltert = yaw -yawKalibriert;
             float pitch = (ypr[1] * 180)/M_PI;
             float roll = (ypr[2] * 180)/M_PI;
@@ -489,7 +491,9 @@ if(zahlenerkennung == 1)
      softwareReset = 1;
      //mpu.resetFIFO();
      STARTerfolgreich = false;
-     myOffset = getYAW();
+     myYAWOffset = getYAW();
+     myPITCHOffset = getPITCH();
+     myROLLOffset = getROLL();
      Serial.println(   softwareReset);
      
   }
@@ -503,6 +507,16 @@ if(zahlenerkennung == 1)
 
 int getYAW()
 {
-  return (int)(((ypr[0] * 180)/M_PI)-myOffset);
+  return (int)(((ypr[0] * 180)/M_PI)-myYAWOffset);
+}
+int getPITCH()
+{
+  return (int) (((ypr[1] * 180)/M_PI)-myPITCHOffset);
+}
+
+
+int getROLL()
+{
+  return (int) (((ypr[2]*180)/M_PI)-myROLLOffset);
 }
 
