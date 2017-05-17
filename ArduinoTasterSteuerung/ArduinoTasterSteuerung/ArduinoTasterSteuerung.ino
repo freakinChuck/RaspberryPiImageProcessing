@@ -1,10 +1,11 @@
 
 #include <Stepper.h>
+#include <math.h>
 
 /* Mit dem Switch wird die Positon des Taster ausgerechnet. Mit der Funktion claculate Steps wird anschliessend ausgerechnet, wie viele Schritte der Stepper Motor machen muss
 */
-const int schritteProUmdrehung = 400;  // Anzahl Schritte des Stepper Motors
-int abstandVorhanden = -100; //gemessener Abstand durch Ultraschall
+const double schritteProUmdrehung = 400.0;  // Anzahl Schritte des Stepper Motors
+int abstandVorhanden = 180; //gemessener Abstand durch Ultraschall
 int gerechneterAbstand = 0;
 int romanNumber = 1; //ausgelesene Römisch Zahl
 
@@ -15,7 +16,7 @@ int abstandZwei = 315;
 int abstandEins = 375;
 int i=1;
 
-Stepper myStepper(schritteProUmdrehung, 40, 41, 42, 43); // Initialisierung Stepper
+Stepper myStepper(schritteProUmdrehung, 8, 9, 12, 13); // Initialisierung Stepper
 
 
 void setup() {
@@ -24,25 +25,26 @@ void setup() {
   Serial.begin(9600);  
 }
 
- int calculateSteps(int abstand){
+ int calculateSteps(double abstand){
   //Serial.print(abstand);
   //Serial.print('\n');
  
-    float steps = 0;
-    steps = (PI/2)-atan(30/abs(abstand)); //umrechen von benötigtem abstand in Winekl rad
+    double steps = 0;
+    
+    steps =(PI/2)- atan(30.0/abs(abstand)); //umrechen von benötigtem abstand in Winkel rad
+    
     steps = ((steps * 360)/(2*PI)); //  umerechen von rad in degree
-  // Serial.print(steps);
+  //Serial.print(steps);
   // Serial.print('\n');
-    if (abstand>0) {    // Handling von Abständen kleiner als 0
-        steps = steps / (360/schritteProUmdrehung); // umrechen von degree in steps 
+    if (abstand>0) {    // Handling von Abständen kleiner als 0 
+        steps = (steps / (360/schritteProUmdrehung)); // umrechen von degree in steps  
       }
     else {
-       steps = -(steps / (360/schritteProUmdrehung)); 
+       steps = -(steps /(360/schritteProUmdrehung)); 
        }            
     steps = round(steps); 
     Serial.print(steps);
     return steps;
-    
   }
 
   int moveMotor (){
@@ -50,7 +52,6 @@ void setup() {
     case 1: 
         gerechneterAbstand = abstandEins-155-abstandVorhanden;
         myStepper.step(calculateSteps(gerechneterAbstand));  // Je nach Parcourseite muss 155mm oder 65mm angepasst werden
-        Serial.println("Test .......................");
     break;
     case 2:
         gerechneterAbstand = abstandZwei-155+abstandVorhanden;
@@ -76,4 +77,6 @@ void setup() {
  
 void loop() {
 moveMotor(); 
+
+delay(2000);
 }
