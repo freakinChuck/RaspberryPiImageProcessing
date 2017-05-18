@@ -1,9 +1,16 @@
 package ch.hslu.pren.hs16fs17.grp27.imageprocessing;
 
+import ch.hslu.pren.hs16fs17.grp27.Application;
 import ch.hslu.pren.hs16fs17.grp27.imageprocessing.helper.Image;
+import ch.hslu.pren.hs16fs17.grp27.imageprocessing.helper.MatToBufImg;
+import ch.hslu.pren.hs16fs17.grp27.settings.Configuration;
+import javafx.beans.property.StringProperty;
 import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
 
+import javax.imageio.ImageIO;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +19,7 @@ import java.util.List;
  */
 public class RedBarFinder {
 
-    public Image FindRedDoubleBar(Mat matToProcess){
+    public Image FindRedDoubleBar(Mat matToProcess, int index){
         Mat hsv_image = new Mat();
         Imgproc.cvtColor(matToProcess, hsv_image, Imgproc.COLOR_BGR2HSV);
 
@@ -61,6 +68,25 @@ public class RedBarFinder {
         }
 
         if(barCount == 2){
+
+            if (Configuration.DOTAKEIMAGES) {
+
+                MatToBufImg matToBufImg = new MatToBufImg();
+                matToBufImg.setMatrix(red_hue_image, ".png");
+
+                String folderBasePath = Application.getFolderBaseBath();
+
+                File outputfile = new File(folderBasePath + "/" + "RedBar" + String.format("%03d", index) + ".png");
+                try {
+                    ImageIO.write(matToBufImg.getBufferedImage(), "png", outputfile);
+                    System.out.println("Wrote File: " + outputfile.getAbsolutePath());
+
+                }
+                catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
             return new Image(matToProcess, foundRectangles);
         }
         return null;

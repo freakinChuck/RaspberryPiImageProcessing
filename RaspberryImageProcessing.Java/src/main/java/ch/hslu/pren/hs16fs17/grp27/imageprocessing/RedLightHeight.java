@@ -1,10 +1,17 @@
 package ch.hslu.pren.hs16fs17.grp27.imageprocessing;
 
+import ch.hslu.pren.hs16fs17.grp27.Application;
+import ch.hslu.pren.hs16fs17.grp27.imageprocessing.helper.MatToBufImg;
+import ch.hslu.pren.hs16fs17.grp27.settings.Configuration;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
+
+import javax.imageio.ImageIO;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Created by silvio on 23.03.17.
@@ -53,6 +60,35 @@ public class RedLightHeight {
                         break;
                     org.opencv.core.Point pt = new org.opencv.core.Point(Math.round(vCircle[0]), Math.round(vCircle[1]));
                     this.redPos = (int)pt.y;
+
+                    if (Configuration.DOTAKEIMAGES) {
+
+                        MatToBufImg matToBufImg = new MatToBufImg();
+                        matToBufImg.setMatrix(frame, ".png");
+
+                        File outputfile = new File(Application.getFolderBaseBath() + "/" + "RedOriginal.png");
+                        try {
+                            ImageIO.write(matToBufImg.getBufferedImage(), "png", outputfile);
+                            System.out.println("Wrote File: " + outputfile.getAbsolutePath());
+
+                        }
+                        catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        matToBufImg = new MatToBufImg();
+                        matToBufImg.setMatrix(red_hue_image, ".png");
+                        outputfile = new File(Application.getFolderBaseBath() + "/" + "RedHue.png");
+                        try {
+                            ImageIO.write(matToBufImg.getBufferedImage(), "png", outputfile);
+                            System.out.println("Wrote File: " + outputfile.getAbsolutePath());
+
+                        }
+                        catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
                     return true;
                 }
             }

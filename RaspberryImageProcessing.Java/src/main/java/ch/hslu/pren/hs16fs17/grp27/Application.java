@@ -27,6 +27,15 @@ import java.util.concurrent.Future;
  * Created by silvio on 17.03.17.
  */
 public class Application {
+
+
+    static Calendar calendar = Calendar.getInstance();
+    static String currentDateAsString = String.format("%tY%te%td%tl%tm", calendar, calendar, calendar, calendar, calendar);
+    public static String getFolderBaseBath(){
+        return "/home/pi/Images/" + currentDateAsString;
+
+    }
+
     public static void main(String[] args) throws InterruptedException {
 
         Application.SetUpEnvironment();
@@ -56,6 +65,12 @@ public class Application {
             System.out.println("Shutdown initiated....");
             communication.ClearPinData();
             return;
+        }
+
+
+        String folderBasePath = getFolderBaseBath();
+        if (Files.notExists(Paths.get(folderBasePath))) {
+            new File(folderBasePath).mkdirs();
         }
 
         while(!redLightHeight.FindRedLightHeight(frontCamera.Capture())){
@@ -109,7 +124,7 @@ public class Application {
 
         while (redBarImages[0] == null) {
             Mat capturedImage = sideCamera.Capture();
-            Image foundImage = redBarFinder.FindRedDoubleBar(capturedImage);
+            Image foundImage = redBarFinder.FindRedDoubleBar(capturedImage, 0);
             if (foundImage != null) {
                 System.out.println("Redbar found");
                 redBarImages[0] = foundImage;
@@ -124,7 +139,7 @@ public class Application {
         }
 
         for (int i = 0; i < matrixesToEvaluate.length; i++) {
-            redBarImages[i+1] = redBarFinder.FindRedDoubleBar(matrixesToEvaluate[i]);
+            redBarImages[i+1] = redBarFinder.FindRedDoubleBar(matrixesToEvaluate[i], i);
             if (redBarImages[i+1] != null) {
                 System.out.println("RedbarFound Picture" + i);
             }
@@ -135,9 +150,9 @@ public class Application {
 
         for (int x = 0; x < numberOfImagesToTake; x++) {
 
-
+            final int index = x;
             Future<Integer> numberRecognitionFuture = CompletableFuture.completedFuture(redBarImages[x])
-                    .thenApplyAsync(img -> img != null ? romanCharacterFinder.FindCharacter(img) : 0)
+                    .thenApplyAsync(img -> img != null ? romanCharacterFinder.FindCharacter(img, index) : 0)
                     .thenApplyAsync(i -> {
                         if (i > 0)
                             intList.add(i);
@@ -200,33 +215,26 @@ public class Application {
 
 
         PrintNumberInConsole(maxKey, maxNumbers, objects.length);
-        /*
-        Calendar calendar = Calendar.getInstance();
-        String currentDateAsString = String.format("%tY%te%td%tl%tm", calendar, calendar, calendar, calendar, calendar);
-        String folderBasePath = "/home/pi/Images/" + currentDateAsString;
 
-        if (Files.notExists(Paths.get(folderBasePath))) {
-            new File(folderBasePath).mkdirs();
-        }
 
-        for (int i = 0; i < matrixesToEvaluate.length; i++) {
-            Mat mat = matrixesToEvaluate[i];
-            MatToBufImg matToBufImg = new MatToBufImg();
-            matToBufImg.setMatrix(mat, ".png");
+        if (Configuration.DOTAKEIMAGES) {
+            for (int i = 0; i < matrixesToEvaluate.length; i++) {
+                Mat mat = matrixesToEvaluate[i];
+                MatToBufImg matToBufImg = new MatToBufImg();
+                matToBufImg.setMatrix(mat, ".png");
 
-            File outputfile = new File(folderBasePath + "/" + "Original" + String.format("%03d", i)+ ".png");
-            try {
-                ImageIO.write(matToBufImg.getBufferedImage(), "png", outputfile);
-                System.out.println("Wrote File: " + outputfile.getAbsolutePath());
+                File outputfile = new File(folderBasePath + "/" + "Original" + String.format("%03d", i)+ ".png");
+                try {
+                    ImageIO.write(matToBufImg.getBufferedImage(), "png", outputfile);
+                    System.out.println("Wrote File: " + outputfile.getAbsolutePath());
 
-            } catch (IOException e) {
-                e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
             }
-
+            System.out.println("File write done");
         }
-        System.out.println("File write done");
-        */
-        //Thread.sleep(10000);
 
     }
 

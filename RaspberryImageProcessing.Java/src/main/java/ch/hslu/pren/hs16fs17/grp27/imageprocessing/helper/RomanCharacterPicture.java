@@ -1,12 +1,16 @@
 package ch.hslu.pren.hs16fs17.grp27.imageprocessing.helper;
 
 
+import ch.hslu.pren.hs16fs17.grp27.Application;
 import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract;
 import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -21,8 +25,11 @@ public class RomanCharacterPicture {
     private TesseractInstance tessIns = new TesseractInstance();
     private ITesseract tesseract = tessIns.getSingletonTesseract();
 
-    public RomanCharacterPicture(Mat webcam_image, List<Rect> foundRectangles){
+    private int index;
+
+    public RomanCharacterPicture(Mat webcam_image, List<Rect> foundRectangles, int index){
         this.webcam_image = webcam_image;
+        this.index = index;
         if(foundRectangles.get(0).x < foundRectangles.get(1).x){
             leftRectangle = new RectangleCoordinates(foundRectangles.get(0).x + foundRectangles.get(0).width, foundRectangles.get(0).y);
             rightRectangle = new RectangleCoordinates(foundRectangles.get(1).x,foundRectangles.get(1).y + foundRectangles.get(1).height);
@@ -119,6 +126,21 @@ public class RomanCharacterPicture {
             int counter = 0;
             counter = (forEachCharI+forEachCharV);
             //System.out.println("All chars:" + result + " --> " + counter + "\n");
+
+            MatToBufImg matToBufImg = new MatToBufImg();
+            matToBufImg.setMatrix(white_hue_image, ".png");
+
+            String folderBasePath = Application.getFolderBaseBath();
+
+            File outputfile = new File(folderBasePath + "/" + "Number"+ String.format("%03d", index) +".png");
+            try {
+                ImageIO.write(matToBufImg.getBufferedImage(), "png", outputfile);
+                System.out.println("Wrote File: " + outputfile.getAbsolutePath());
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
             return(counter);
         }catch(Exception ex){
             System.err.println(ex.toString());
