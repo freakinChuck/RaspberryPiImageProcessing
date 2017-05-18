@@ -47,8 +47,10 @@ public class Application {
         RomanCharacterFinder romanCharacterFinder = new RomanCharacterFinder();
         GpioCommunication communication = new GpioCommunication();
 
-        communication.ClearPinData();
-        communication.InitiateWaitState();
+        if (Configuration.DOCOMMUNICATION) {
+            communication.ClearPinData();
+            communication.InitiateWaitState();
+        }
 
         int count = 0;
         while (!frontCamera.Available() && count++ < 20){
@@ -59,11 +61,13 @@ public class Application {
 
         if (!frontCamera.Available()){
             System.out.println("TILT.....");
-            communication.DisplayTilt();
+            if (Configuration.DOCOMMUNICATION)
+                communication.DisplayTilt();
             Thread.sleep(2000);
 
             System.out.println("Shutdown initiated....");
-            communication.ClearPinData();
+            if (Configuration.DOCOMMUNICATION)
+                communication.ClearPinData();
             return;
         }
 
@@ -98,7 +102,8 @@ public class Application {
         System.out.println("Green light Found");
         frontCamera.Shutdown();
 
-        communication.SendStartSignal();
+        if (Configuration.DOCOMMUNICATION)
+            communication.SendStartSignal();
 
         System.out.println("Start Signal sent to Arduino");
 
@@ -207,9 +212,11 @@ public class Application {
 
         System.out.println("Number "+ maxKey + " found");
 
-        communication.DisplayNumber(maxKey);
-        communication.SendNumber(maxKey);
+        if (Configuration.DOCOMMUNICATION) {
 
+            communication.DisplayNumber(maxKey);
+            communication.SendNumber(maxKey);
+        }
 
         System.out.println("Number " + maxKey + " sent to Arduino");
 

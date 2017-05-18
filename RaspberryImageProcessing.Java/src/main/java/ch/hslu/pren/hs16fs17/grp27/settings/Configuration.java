@@ -28,5 +28,6 @@ public class Configuration {
     public static final Pin DISPLAYBOTTOMRIGHTPIN = RaspiPin.GPIO_23;
 
     public static final boolean DOTAKEIMAGES = true;
+    public static final boolean DOCOMMUNICATION = true;
 
 }
