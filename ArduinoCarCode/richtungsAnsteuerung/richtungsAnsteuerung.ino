@@ -23,6 +23,7 @@ boolean KURVEABGESCHLOSSEN = false;
 boolean TorKorrekrurNachLinks = false;
 boolean  geradeAus = false;
 boolean offsetDone = false;
+
 int messung = 0;
 int erkanntezahl = 0;
 int softwareReset = 0;
@@ -139,7 +140,7 @@ if(zahlenerkennung == 1)
             mpu.dmpGetGravity(&gravity, &q);
             mpu.dmpGetYawPitchRoll(ypr, &q, &gravity);
          
-            float yaw = ((ypr[0] * 180)/M_PI)-myYAWOffset;            
+            float yaw = ((ypr[0] * 180)/M_PI)-myYAWOffset-17;            
             //float yawGefiltert = yaw -yawKalibriert;
             float pitch = (ypr[1] * 180)/M_PI;
             float roll = (ypr[2] * 180)/M_PI;
@@ -164,9 +165,12 @@ if(zahlenerkennung == 1)
                 }
                 else
                 {
-                  if(abstandLinks()>25)
+                  if(abstandLinks()>20)
                   {
+                    while(1)
+                    {
                   stopMotor();
+                    }
                   }
                 }
                  
@@ -235,9 +239,12 @@ if(zahlenerkennung == 1)
                 }
                 else
                 {
-                 if(abstandLinks()>25)
+                 if(abstandLinks()>20)
                   {
+                    while(1)
+                    {
                   stopMotor();
+                    }
                   }
                 }
                  
@@ -293,7 +300,7 @@ if(zahlenerkennung == 1)
 
             
            
-            if(pitch > 15)
+            if(pitch > 7)
             {
               
               Serial.print(" ,ist nach hinten gekippt  ");
@@ -311,7 +318,7 @@ if(zahlenerkennung == 1)
               
               
             }
-            else if(pitch > 10)
+            else if(pitch > 4)
             {
               Serial.print(" ,ist leicht nach hinten gekippt  ");
               if( treppeUeberwunden == true && KURVEABGESCHLOSSEN==false)
@@ -319,13 +326,14 @@ if(zahlenerkennung == 1)
                 faehrtUeberVerschraenkung();            
               }
             }
-            else if(pitch < -1)
+            else if(pitch < -20)
             {
               
               Serial.print(" ,ist nach vorne gekippt ");
               if(KURVEABGESCHLOSSEN == false)
               {
-            nachVorneGekippt();
+            //nachVorneGekippt();
+            faehrtGeradeAus();
             treppeUeberwunden = true;
             NACHVORNEGEKIPPT = true;
             NACHHINTENGEKIPPT = false;
@@ -353,7 +361,7 @@ if(zahlenerkennung == 1)
                 {
                   Kurvenloop = true;
                   test++;
-                  delay(400);
+                  delay(1000);
                 }
                 
                 }
@@ -373,7 +381,7 @@ if(zahlenerkennung == 1)
                 {  
                   KURVEEINLEITEN = true;
                  Serial.print("     Fahre Kurve !!!!!    ");
-                  //while(getYAW() > -75 && HALBEKURVEABGESCHLOSSEN == false)
+                //  while(getYAW() > -75 && HALBEKURVEABGESCHLOSSEN == false)
                   //{
                 fahreKurveNachLinks();
                  // }
@@ -485,18 +493,18 @@ if(zahlenerkennung == 1)
 
      if(softwareReset==0)
   {
-  if(geradeAus == false)
-  {
+ // if(geradeAus == false)
+ // {
      //wdt_enable(WDTO_1S); 
      softwareReset = 1;
      //mpu.resetFIFO();
      STARTerfolgreich = false;
      myYAWOffset = getYAW();
-     myPITCHOffset = getPITCH();
-     myROLLOffset = getROLL();
+     //myPITCHOffset = getPITCH();
+     //myROLLOffset = getROLL();
      Serial.println(   softwareReset);
      
-  }
+//  }
   }
 
   

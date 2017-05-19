@@ -14,12 +14,13 @@
  //==========================================================================================================================================================================================================================================================================
 //                                                     Pins müssen noch angepasst werden
 //==========================================================================================================================================================================================================================================================================
-
+//Pin Belegung Echopin:      Hinten Links: 22;  Vorne Links: 23;   Vorne: 24;   Vorne Rechts : 25;    Hinten Rechts : 26
+//Pin Belegung Triggerpin:   Hinten Links: 3;   Vorne Links: 4;    Vorne: 5;    Vorne Rechts : 6;     Hinten Rechts : 7
 
 
 #define echoPin 6 // Echo Pin
 #define trigPin 7 // Trigger Pin
-#define LEDPin 13 // Onboard LED
+//#define LEDPin 13 // Onboard LED
 #define echoPin2 4 // Echo Pin
 #define trigPin2 5 // Trigger Pin
 
@@ -35,7 +36,7 @@ void ultraschallSetup() {
  pinMode(echoPin, INPUT);
  pinMode(trigPin2, OUTPUT);
  pinMode(echoPin2, INPUT);
- pinMode(LEDPin, OUTPUT); // Use LED indicator (if required)
+// pinMode(LEDPin, OUTPUT); // Use LED indicator (if required)
 
 }
 
@@ -58,14 +59,14 @@ int abstandVorne() {
  /* Send a negative number to computer and Turn LED ON 
  to indicate "out of range" */
  Serial.println("-1");
- digitalWrite(LEDPin, HIGH); 
+ //digitalWrite(LEDPin, HIGH); 
  }
  else {
  /* Send the distance to the computer using Serial protocol, and
  turn LED OFF to indicate successful reading. */
  Serial.print(" Abstand Vorne: ");
  Serial.println(distance);
- digitalWrite(LEDPin, LOW); 
+ //digitalWrite(LEDPin, LOW); 
  }
  
  //Delay 50ms before next reading.
@@ -95,14 +96,14 @@ int abstandLinks() {
  /* Send a negative number to computer and Turn LED ON 
  to indicate "out of range" */
  Serial.println("-1");
- digitalWrite(LEDPin, HIGH); 
+ //digitalWrite(LEDPin, HIGH); 
  }
  else {
  /* Send the distance to the computer using Serial protocol, and
  turn LED OFF to indicate successful reading. */
  Serial.print(" Abstand Links: ");
  Serial.println(distance2);
- digitalWrite(LEDPin, LOW); 
+// digitalWrite(LEDPin, LOW); 
  }
  
  //Delay 50ms before next reading.

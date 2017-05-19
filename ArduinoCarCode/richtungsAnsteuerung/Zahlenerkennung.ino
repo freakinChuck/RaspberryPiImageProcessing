@@ -1,7 +1,7 @@
+// Stellen Pins:  1ste: 46;  2te: 47;  3te: 48
 
-
-int ersteStellePin = 44;
-int zweiteStellePin = 46;
+int ersteStellePin = 46;
+int zweiteStellePin = 47;
 int dritteStellePin = 48;
 int erkannteZahl = 0;
 int s1,s2,s3 = 0;

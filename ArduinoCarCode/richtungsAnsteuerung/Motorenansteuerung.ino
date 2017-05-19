@@ -3,13 +3,18 @@
 // Smart Robot Car: Part 4 - DC Motors & L298N Dual Motor Controller 
 // Wiring & Video Demo: https://www.youtube.com/watch?v=0RLAivgppBM
 
+//Motoren Enable Pins:     EnA: 38; EnB: 39
+//PWM Pins:                In1: 8;  In2: 9;   In3: 10;   In4: 11 ;
+
+
+
 // connect motor controller pins to Arduino digital pins
 // motor one
-int enA = 34;
+int enA = 38;
 int in1 = 12;
 int in2 = 11;
 // motor two
-int enB = 35;
+int enB = 39;
 int in3 = 10;
 int in4 = 9;
 
