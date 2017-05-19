@@ -34,8 +34,8 @@ public class RedLightHeight {
             Mat lower_red_hue_range = new Mat();
             Mat upper_red_hue_range = new Mat();
             //Rotbereich festlegen. um die roten Balken zu erkenne/filtern
-            Core.inRange(hsv_image_red, new Scalar(0,100,100), new Scalar(10, 227, 255), lower_red_hue_range);
-            Core.inRange(hsv_image_red, new Scalar(160, 100, 100), new Scalar(179, 255, 255), upper_red_hue_range);
+            Core.inRange(hsv_image_red, new Scalar(0,120,120), new Scalar(10, 255, 255), lower_red_hue_range);
+            Core.inRange(hsv_image_red, new Scalar(170, 120, 120), new Scalar(180, 255, 255), upper_red_hue_range);
             //Rotfilter anwenden
             Mat red_hue_image = new Mat();
             Core.addWeighted(lower_red_hue_range, 1.0, upper_red_hue_range, 1.0, 0.0, red_hue_image);

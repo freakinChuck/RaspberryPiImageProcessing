@@ -27,8 +27,8 @@ public class GreenlightFinder {
             Imgproc.cvtColor(frame, hsv_image, Imgproc.COLOR_BGR2HSV);
             Mat green_hue_range = new Mat();
             //Set Green range
-            int sensitivity = 15;
-            Core.inRange(hsv_image, new Scalar(60 - sensitivity, 80, 60), new Scalar(60 + sensitivity, 255, 255), green_hue_range);
+            int sensitivity = 20;
+            Core.inRange(hsv_image, new Scalar(60 - sensitivity, 100, 100), new Scalar(60 + sensitivity, 255, 255), green_hue_range);
             //Slightly blur the image. Improves false-positiv circle detection
             Imgproc.GaussianBlur(green_hue_range, green_hue_range, new Size(9, 9), 2, 2);
 
