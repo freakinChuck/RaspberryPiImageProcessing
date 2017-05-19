@@ -93,10 +93,9 @@ public class Application {
             }
         }
 
-        System.out.println("Redlight found at: " + redLightHeight.getRedPos());
+        System.out.println("Redlight found at: " + redLightHeight.getRedXPos());
 
-
-        Rect belowRedLight = new Rect(0, redLightHeight.getRedPos(), frontCameraWidth,frontCameraHeight-(redLightHeight.getRedPos()));
+        Rect belowRedLight = new Rect(redLightHeight.getRedXPos(), 0, frontCameraWidth-redLightHeight.getRedXPos(),frontCameraHeight);
 
         while (!greenlightFinder.ImageContainsGreenLight(new Mat(frontCamera.Capture(),belowRedLight))){
             System.out.println("waiting for Greenlight");
@@ -107,7 +106,7 @@ public class Application {
 
             }
         }
-
+        
         System.out.println("Green light Found");
         frontCamera.Shutdown();
 

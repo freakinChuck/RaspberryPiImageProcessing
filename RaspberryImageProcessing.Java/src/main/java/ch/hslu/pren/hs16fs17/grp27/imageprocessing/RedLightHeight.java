@@ -17,10 +17,14 @@ import java.io.IOException;
  * Created by silvio on 23.03.17.
  */
 public class RedLightHeight {
-    private int redPos= 0;
+    private int redYPos= 0;
+    private int redXPos= 0;
 
-    public int getRedPos(){
-        return redPos;
+    public int getRedYPos(){
+        return redYPos;
+    }
+    public int getRedXPos(){
+        return redXPos;
     }
     public boolean FindRedLightHeight(Mat frame){
         try {
@@ -59,7 +63,8 @@ public class RedLightHeight {
                     if (vCircle == null)
                         break;
                     org.opencv.core.Point pt = new org.opencv.core.Point(Math.round(vCircle[0]), Math.round(vCircle[1]));
-                    this.redPos = (int)pt.y;
+                    this.redYPos = (int)pt.y;
+                    this.redXPos = (int)pt.x;
 
                     if (Configuration.DOTAKEIMAGES) {
 
