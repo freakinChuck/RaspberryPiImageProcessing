@@ -45,9 +45,10 @@ public class Application {
         GreenlightFinder greenlightFinder = new GreenlightFinder();
         RedBarFinder redBarFinder = new RedBarFinder();
         RomanCharacterFinder romanCharacterFinder = new RomanCharacterFinder();
-        GpioCommunication communication = new GpioCommunication();
+        GpioCommunication communication;
 
         if (Configuration.DOCOMMUNICATION) {
+            communication = new GpioCommunication();
             communication.ClearPinData();
             communication.InitiateWaitState();
         }
