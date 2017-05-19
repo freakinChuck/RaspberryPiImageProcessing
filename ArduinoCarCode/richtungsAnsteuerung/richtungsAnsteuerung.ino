@@ -326,7 +326,7 @@ if(zahlenerkennung == 1)
                 faehrtUeberVerschraenkung();            
               }
             }
-            else if(pitch < -20)
+            else if(pitch < -10)   //    war auf -20   am 19.05.2017
             {
               
               Serial.print(" ,ist nach vorne gekippt ");
@@ -342,7 +342,7 @@ if(zahlenerkennung == 1)
               else
               {
                 
-                  EndeParcours = true;
+                  EndeParcours = true;      // stoppt wegen dem nicht mehr vor Taster
                 
               }
             }
