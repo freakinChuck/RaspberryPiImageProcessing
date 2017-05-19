@@ -165,7 +165,7 @@ if(zahlenerkennung == 1)
                 }
                 else
                 {
-                  if(abstandLinks()>20)
+                  if(abstandHintenLinks()>20)
                   {
                     while(1)
                     {
@@ -239,7 +239,7 @@ if(zahlenerkennung == 1)
                 }
                 else
                 {
-                 if(abstandLinks()>20)
+                 if(abstandHintenLinks()>20)
                   {
                     while(1)
                     {
@@ -357,7 +357,7 @@ if(zahlenerkennung == 1)
               {
                 if(test == 0)
                 {
-                if(abstandLinks()> 30)
+                if(abstandHintenLinks()> 30)
                 {
                   Kurvenloop = true;
                   test++;

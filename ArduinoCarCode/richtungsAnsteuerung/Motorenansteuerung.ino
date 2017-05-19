@@ -11,12 +11,12 @@
 // connect motor controller pins to Arduino digital pins
 // motor one
 int enA = 38;
-int in1 = 12;
-int in2 = 11;
+int in1 = 8;
+int in2 = 9;
 // motor two
 int enB = 39;
 int in3 = 10;
-int in4 = 9;
+int in4 = 11;
 
 int speedGeradeAus = 100;
 int speedKurve = 100;
