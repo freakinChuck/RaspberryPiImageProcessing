@@ -46,6 +46,10 @@ public class Application {
         RedBarFinder redBarFinder = new RedBarFinder();
         RomanCharacterFinder romanCharacterFinder = new RomanCharacterFinder();
         GpioCommunication communication;
+        int frontCameraWidth;
+        int frontCameraHeight;
+
+
 
         if (Configuration.DOCOMMUNICATION) {
             communication = new GpioCommunication();
@@ -72,6 +76,9 @@ public class Application {
             return;
         }
 
+        //Save Camera With and Height for further steps
+        frontCameraWidth = frontCamera.Capture().width();
+        frontCameraHeight = frontCamera.Capture().height();
 
         String folderBasePath = getFolderBaseBath();
         if (Files.notExists(Paths.get(folderBasePath))) {
@@ -88,7 +95,8 @@ public class Application {
 
         System.out.println("Redlight found at: " + redLightHeight.getRedPos());
 
-        Rect belowRedLight = new Rect(0, redLightHeight.getRedPos(), frontCamera.Capture().width(),frontCamera.Capture().height()-(redLightHeight.getRedPos()));
+
+        Rect belowRedLight = new Rect(0, redLightHeight.getRedPos(), frontCameraWidth,frontCameraHeight-(redLightHeight.getRedPos()));
 
         while (!greenlightFinder.ImageContainsGreenLight(new Mat(frontCamera.Capture(),belowRedLight))){
             System.out.println("waiting for Greenlight");
