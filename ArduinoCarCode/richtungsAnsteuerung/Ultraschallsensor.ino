@@ -39,6 +39,20 @@ int maximumRange = 105; // Maximum range needed
 int minimumRange = 0; // Minimum range needed
 long durationHL, durationVL, durationV, durationVR, durationHR,         distanceHL, distanceVL, distanceV, distanceVR, distanceHR; // Duration used to calculate distance
 
+int ausgerichtet = 0;
+int messungVR = 0;
+int messungHR = 0;
+int messungVL = 0;
+int messungHL = 0;
+double abstandHR = 0;
+double abstandVR = 0;
+double abstandHL = 0;
+double abstandVL = 0;
+double winkelKorrekturL = 0;
+double winkelKorrekturR = 0;
+
+
+
 void ultraschallSetup() {
   //Serial.begin (115200);
  pinMode(trigPinHL, OUTPUT);
@@ -258,6 +272,73 @@ int abstandHintenRechts() {
 
 int distanzHR = (int)(distanceHR);
  return distanzHR;
+}
+
+
+
+//***********************************************************************************************************************************************************************************************************************************
+//********************************************************************************************Korrektur für Taste drücken  (Parcours Rechts)*****************************************************************************************
+//***********************************************************************************************************************************************************************************************************************************
+
+
+int ausrichtungParcoursRechts()
+{
+  if(ausgerichtet == 0)
+  {
+    if(messungHR == 0)
+    {
+     abstandHR =  abstandHintenRechts();
+     messungHR++;
+    }
+    if(messungVR == 0)
+    {
+      abstandVR = abstandVorneRechts();
+      messungVR++;
+    }
+
+    winkelKorrekturR = atan(abstandVR - abstandHR);
+    ausgerichtet++;
+    
+  }
+
+  Serial.print("Resultat: ");
+  Serial.println(winkelKorrekturR);
+  return winkelKorrekturR;
+
+  
+}
+
+
+//***********************************************************************************************************************************************************************************************************************************
+//********************************************************************************************Korrektur für Taste drücken  (Parcours Links)*****************************************************************************************
+//***********************************************************************************************************************************************************************************************************************************
+
+
+int ausrichtungParcoursLinks()
+{
+  if(ausgerichtet == 0)
+  {
+    if(messungHL == 0)
+    {
+     abstandHL =  abstandHintenLinks();
+     messungHL++;
+    }
+    if(messungVL == 0)
+    {
+      abstandVL = abstandVorneLinks();
+      messungVL++;
+    }
+
+    winkelKorrekturL = atan(abstandVL - abstandHL);
+    ausgerichtet++;
+    
+  }
+
+  Serial.print("Resultat: ");
+  Serial.println(winkelKorrekturL);
+  return winkelKorrekturL;
+
+  
 }
 
 
