@@ -5,6 +5,7 @@
 int parcours = 0; //0 = Parcours rechts    1 = Parcours Links
 int ampelerkennung = 0;    //Ampelerkennung ausgeschaltet = 0, eingeschaltet = 1
 int zahlenerkennung = 0;   //Zahlenerkennung ausgeschaltet = 0, eingeschaltet = 1
+int startSignalPin = 40;
 
 
 boolean STARTerfolgreich = true;
@@ -54,14 +55,14 @@ TCCR0B = _BV(CS00) | _BV(CS02);  //1024
   motorSetup();
   ultraschallSetup();
   ampelSetup();
-     
+  pinMode(startSignalPin, OUTPUT);
 
 
 }
 
 void loop() {
 
- 
+digitalWrite(startSignalPin, HIGH); 
 
 // hier Ampelerkennungs Methode einsetzen
 if(ampelerkennung == 1)
@@ -159,12 +160,12 @@ if(zahlenerkennung == 1)
                 KURVEABGESCHLOSSEN = true;
                 SELBSTHALTUNG = false;
                 }
-                if(EndeParcours == false )
+                if(EndeParcours == false )       
                 {
                  faehrtEGeradeAus();
                 }
-                else
-                {
+               // else
+                //{
                   if(abstandHintenLinks()>20)
                   {
                     while(1)
@@ -172,7 +173,7 @@ if(zahlenerkennung == 1)
                   stopMotor();
                     }
                   }
-                }
+               // } // ende else
                  
                         
               }
@@ -237,8 +238,8 @@ if(zahlenerkennung == 1)
                 {
               faehrtEGeradeAus();
                 }
-                else
-                {
+                //else
+               // {
                  if(abstandHintenLinks()>20)
                   {
                     while(1)
@@ -246,7 +247,7 @@ if(zahlenerkennung == 1)
                   stopMotor();
                     }
                   }
-                }
+               // } // ende else
                  
               }
               else if(yaw<-140)
@@ -326,7 +327,7 @@ if(zahlenerkennung == 1)
                 faehrtUeberVerschraenkung();            
               }
             }
-            else if(pitch < -10)   //    war auf -20   am 19.05.2017
+            else if(pitch < -20)   //    war auf -20   am 19.05.2017
             {
               
               Serial.print(" ,ist nach vorne gekippt ");
