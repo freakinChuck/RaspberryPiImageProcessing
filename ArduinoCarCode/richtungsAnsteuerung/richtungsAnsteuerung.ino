@@ -24,6 +24,10 @@ boolean KURVEABGESCHLOSSEN = false;
 boolean TorKorrekrurNachLinks = false;
 boolean  geradeAus = false;
 boolean offsetDone = false;
+boolean startOffset = false;
+ float yaw12 = 0;
+
+
 
 int messung = 0;
 int erkanntezahl = 0;
@@ -33,6 +37,8 @@ int myROLLOffset = 0;
 int myPITCHOffset = 0;
 int startKurveOffset = 0;
 int test = 0;
+
+
 
 
 
@@ -60,7 +66,44 @@ TCCR0B = _BV(CS00) | _BV(CS02);  //1024
 
 }
 
+int mpuKorrektur()
+{  int ctrl = 0;
+ /* int z = 0;
+  float myYAW;*/
+
+       
+ 
+  /**int ctrl;
+  float yaw1,yaw2 = 0;
+  
+                 
+           
+            Serial.println("Korrektur!!!!!");
+  yaw1 = getYAW();
+  Serial.println(yaw1);     
+
+  delay(2000);
+  yaw2 = getYAW();
+  Serial.println(yaw2);
+  delay(2000);
+  if(abs( getYAW())<2 || abs(yaw2-yaw1)<0.1)
+  {
+    ctrl = 1;
+  }
+  else
+  {
+    ctrl = 0;
+  }*/
+
+  
+  return ctrl;
+ 
+}
+
+
 void loop() {
+
+
 
 digitalWrite(startSignalPin, HIGH); 
 
@@ -85,7 +128,8 @@ if(zahlenerkennung == 1)
  }
  }
 }
- 
+
+
  
 
 
@@ -135,17 +179,19 @@ if(zahlenerkennung == 1)
 
 
 
-        #ifdef OUTPUT_READABLE_YAWPITCHROLL
+    
             // display Euler angles in degrees
-            mpu.dmpGetQuaternion(&q, fifoBuffer);
+            mpu.dmpGetQuaternion(&q, fifoBuffer);    // *****************************wurde weggenommen *********************************
             mpu.dmpGetGravity(&gravity, &q);
             mpu.dmpGetYawPitchRoll(ypr, &q, &gravity);
          
-            float yaw = ((ypr[0] * 180)/M_PI)-myYAWOffset-17;            
+            float yaw = ((ypr[0] * 180)/M_PI)-myYAWOffset ;            
             //float yawGefiltert = yaw -yawKalibriert;
-            float pitch = (ypr[1] * 180)/M_PI;
-            float roll = (ypr[2] * 180)/M_PI;
+            float pitch = (ypr[1] * 180)/M_PI-myPITCHOffset;
+            float roll = (ypr[2] * 180)/M_PI-myROLLOffset;
             //Serial.print("yaw\t");
+
+           
             Serial.print("Das Fahrzeug  ");
 
             if(yaw>0)
@@ -164,8 +210,8 @@ if(zahlenerkennung == 1)
                 {
                  faehrtEGeradeAus();
                 }
-               // else
-                //{
+                else
+                {
                   if(abstandHintenLinks()>20)
                   {
                     while(1)
@@ -173,7 +219,7 @@ if(zahlenerkennung == 1)
                   stopMotor();
                     }
                   }
-               // } // ende else
+                } // ende else
                  
                         
               }
@@ -238,8 +284,8 @@ if(zahlenerkennung == 1)
                 {
               faehrtEGeradeAus();
                 }
-                //else
-               // {
+                else
+                {
                  if(abstandHintenLinks()>20)
                   {
                     while(1)
@@ -247,7 +293,7 @@ if(zahlenerkennung == 1)
                   stopMotor();
                     }
                   }
-               // } // ende else
+                } // ende else
                  
               }
               else if(yaw<-140)
@@ -301,7 +347,7 @@ if(zahlenerkennung == 1)
 
             
            
-            if(pitch > 7)
+            if(pitch > 7 && startOffset == true)
             {
               
               Serial.print(" ,ist nach hinten gekippt  ");
@@ -312,6 +358,10 @@ if(zahlenerkennung == 1)
               {
               setSpeedGeradeAusL();
               }
+              else
+              {
+                EndeParcours = true;
+              }
               
               
               NACHVORNEGEKIPPT = false;
@@ -319,15 +369,19 @@ if(zahlenerkennung == 1)
               
               
             }
-            else if(pitch > 4)
+            else if(pitch > 10 && startOffset == true)
             {
               Serial.print(" ,ist leicht nach hinten gekippt  ");
               if( treppeUeberwunden == true && KURVEABGESCHLOSSEN==false)
               {
                 faehrtUeberVerschraenkung();            
               }
+              else
+              {
+                EndeParcours = true;
+              }
             }
-            else if(pitch < -20)   //    war auf -20   am 19.05.2017
+            else if(pitch < -5 && startOffset == true)   //    war auf -20   am 19.05.2017
             {
               
               Serial.print(" ,ist nach vorne gekippt ");
@@ -340,12 +394,7 @@ if(zahlenerkennung == 1)
             NACHHINTENGEKIPPT = false;
             setSpeedGeradeAusH();
               }
-              else
-              {
-                
-                  EndeParcours = true;      // stoppt wegen dem nicht mehr vor Taster
-                
-              }
+             
             }
             else{
               Serial.print("  ");
@@ -362,7 +411,7 @@ if(zahlenerkennung == 1)
                 {
                   Kurvenloop = true;
                   test++;
-                  delay(1000);
+                  delay(1200);
                 }
                 
                 }
@@ -395,10 +444,10 @@ if(zahlenerkennung == 1)
                 {
                    
                 KURVEEINLEITEN = false;
-                if((abstandVorne()> 14||abstandVorne()== -1) && KURVEBEENDEN == false){ //war vorher auf 20
+                if((abstandVorne()> 11||abstandVorne()== -1) && KURVEBEENDEN == false){ //war vorher auf 14
                   //delay(2000);
                   
-                  while((abstandVorne()> 14||abstandVorne()== -1)){ //war vorher auf 20
+                  while((abstandVorne()> 11||abstandVorne()== -1)){ //war vorher auf 14
                     setSpeedGeradeAusLL();
                     faehrtGeradeAus();
                     
@@ -442,11 +491,11 @@ if(zahlenerkennung == 1)
                   {
                     if(KURVEABGESCHLOSSEN == true)
                     {
-                      if((abstandVorne() == -1 || abstandVorne()<20 ) && yaw<-160 && TorKorrekrurNachLinks == false  ) // && yaw<-165    wurde entfernt
+                    /*  if((abstandVorne() == -1 || abstandVorne()<20 ) && yaw<-160 && TorKorrekrurNachLinks == false  ) // && yaw<-165    wurde entfernt
                       {
                     Serial.println("Kurve Fertig !!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                     setSpeedGeradeAusH();
-                      }
+                      }*/
                      /* else{
                         delay(2000);
                         TorKorrekrurNachLinks = true;
@@ -483,7 +532,7 @@ if(zahlenerkennung == 1)
             Serial.print(" erkannte Zahl : ");
             Serial.println(erkanntezahl);
             
-        #endif
+      //  #endif
 
 
 
@@ -494,15 +543,19 @@ if(zahlenerkennung == 1)
 
      if(softwareReset==0)
   {
+    
  // if(geradeAus == false)
  // {
+mpuKorrektur();
+
      //wdt_enable(WDTO_1S); 
      softwareReset = 1;
      //mpu.resetFIFO();
      STARTerfolgreich = false;
      myYAWOffset = getYAW();
-     //myPITCHOffset = getPITCH();
-     //myROLLOffset = getROLL();
+     myPITCHOffset = getPITCH();
+     myROLLOffset = getROLL();
+     startOffset = true;
      Serial.println(   softwareReset);
      
 //  }
@@ -528,4 +581,8 @@ int getROLL()
 {
   return (int) (((ypr[2]*180)/M_PI)-myROLLOffset);
 }
+
+
+
+
 

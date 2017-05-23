@@ -19,7 +19,7 @@ int in3 = 10;
 int in4 = 11;
 
 int speedGeradeAus = 100;
-int speedKurve = 100;
+int speedKurve = 150;
 
 
 
@@ -46,7 +46,7 @@ void setSpeedGeradeAusL()
 
 void setSpeedGeradeAusLL()
 {
-  speedGeradeAus = 30;
+  speedGeradeAus = 50;
 }
 
 
@@ -134,7 +134,7 @@ void nachVorneGekippt()
 {
                    analogWrite(in2, 5);
                    digitalWrite(in1,LOW);
-                   analogWrite(in4, 5);
+                   analogWrite(in4, 255);
                    digitalWrite(in3, LOW);
                 // set speed to 200 out of possible range 0~255
                   digitalWrite(enB, HIGH);
