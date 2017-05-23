@@ -2,7 +2,7 @@
 #include <avr/io.h> 
 #include <avr/wdt.h>
 
-int parcours = 0; //0 = Parcours rechts    1 = Parcours Links
+int parcours = 1; //0 = Parcours rechts    1 = Parcours Links
 int ampelerkennung = 0;    //Ampelerkennung ausgeschaltet = 0, eingeschaltet = 1
 int zahlenerkennung = 0;   //Zahlenerkennung ausgeschaltet = 0, eingeschaltet = 1
 int startSignalPin = 40;
@@ -212,7 +212,7 @@ if(zahlenerkennung == 1)
                 }
                 else
                 {
-                  if(abstandHintenLinks()>20)
+                  if(abstandHintenLinks()>20 && parcours == 0 || abstandHintenRechts() && parcours == 1)
                   {
                     while(1)
                     {
@@ -286,7 +286,7 @@ if(zahlenerkennung == 1)
                 }
                 else
                 {
-                 if(abstandHintenLinks()>20)
+                 if(parcours == 0 && abstandHintenLinks()>20  ||  parcours == 1 && abstandHintenRechts()>20 )      //*************************hier änderung für parcours wahl
                   {
                     while(1)
                     {
@@ -407,7 +407,7 @@ if(zahlenerkennung == 1)
               {
                 if(test == 0)
                 {
-                if(abstandHintenLinks()> 30)
+                if( parcours == 0 && abstandHintenLinks()> 30   ||parcours == 1 &&  abstandHintenRechts()>30 ) //************************** hier änderung parcours wahl
                 {
                   Kurvenloop = true;
                   test++;
@@ -427,13 +427,20 @@ if(zahlenerkennung == 1)
                   }
                   
 
-                if((yaw-startKurveOffset) > -90 && HALBEKURVEABGESCHLOSSEN == false) // war auf -85
+                if(  ((yaw-startKurveOffset) > -90 && parcours == 0)||((yaw-startKurveOffset)  < 90 && parcours == 1)   && HALBEKURVEABGESCHLOSSEN == false) // war auf -85
                 {  
                   KURVEEINLEITEN = true;
                  Serial.print("     Fahre Kurve !!!!!    ");
                 //  while(getYAW() > -75 && HALBEKURVEABGESCHLOSSEN == false)
                   //{
+                if(parcours == 0)
+                {
                 fahreKurveNachLinks();
+                }
+                else
+                {
+                  fahreKurveNachRechts();
+                }
                  // }
                
                 //fahreKurveNachRechts();
@@ -461,7 +468,15 @@ if(zahlenerkennung == 1)
                 }else if (KURVEABGESCHLOSSEN == false){
                   //while(getYAW()>-160/*KURVEABGESCHLOSSEN == false*/){
                   KURVEBEENDEN = true;
+
+                  if(parcours == 0)
+                  {
                   fahreKurveNachLinks();
+                  }
+                  else
+                  {
+                    fahreKurveNachRechts();
+                  }
                    Serial.println("     Kurve beendennnnnnnn !!!!!    ");
                  // }
                   
