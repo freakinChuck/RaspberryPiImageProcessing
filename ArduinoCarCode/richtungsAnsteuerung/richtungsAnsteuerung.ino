@@ -2,7 +2,7 @@
 #include <avr/io.h> 
 #include <avr/wdt.h>
 
-int parcours = 1; //0 = Parcours rechts    1 = Parcours Links
+int parcours = 0; //0 = Parcours rechts    1 = Parcours Links
 int ampelerkennung = 0;    //Ampelerkennung ausgeschaltet = 0, eingeschaltet = 1
 int zahlenerkennung = 0;   //Zahlenerkennung ausgeschaltet = 0, eingeschaltet = 1
 int startSignalPin = 40;
@@ -25,7 +25,11 @@ boolean TorKorrekrurNachLinks = false;
 boolean  geradeAus = false;
 boolean offsetDone = false;
 boolean startOffset = false;
+
  float yaw12 = 0;
+ int antiDrift = 0;
+ int driftTime = 0;
+ int antiDcount = 0;
 
 
 
@@ -37,6 +41,9 @@ int myROLLOffset = 0;
 int myPITCHOffset = 0;
 int startKurveOffset = 0;
 int test = 0;
+int parcoursInfo = 0;
+
+int driftOffset = 3.5;
 
 
 
@@ -61,6 +68,8 @@ TCCR0B = _BV(CS00) | _BV(CS02);  //1024
   motorSetup();
   ultraschallSetup();
   ampelSetup();
+  umschalterSetup();
+  parcours = schalterstellung();
   pinMode(startSignalPin, OUTPUT);
 
 
@@ -103,7 +112,20 @@ int mpuKorrektur()
 
 void loop() {
 
-
+for(parcoursInfo;parcoursInfo<5;parcoursInfo++)
+{
+  char* parcoursWahl;
+  if(parcours == 0)
+  {
+    parcoursWahl = "Parcours rechts";
+  }
+  else
+  {
+    parcoursWahl = "Parcours links";
+  }
+  Serial.print("Parcours:   ");
+  Serial.println(parcoursWahl);
+}
 
 digitalWrite(startSignalPin, HIGH); 
 
@@ -185,20 +207,29 @@ if(zahlenerkennung == 1)
             mpu.dmpGetGravity(&gravity, &q);
             mpu.dmpGetYawPitchRoll(ypr, &q, &gravity);
          
-            float yaw = ((ypr[0] * 180)/M_PI)-myYAWOffset ;            
+            float yaw = ((ypr[0] * 180)/M_PI)-myYAWOffset - antiDrift  ;            
             //float yawGefiltert = yaw -yawKalibriert;
             float pitch = (ypr[1] * 180)/M_PI-myPITCHOffset;
             float roll = (ypr[2] * 180)/M_PI-myROLLOffset;
             //Serial.print("yaw\t");
 
-           
+           if(driftTime %100 == 0 && antiDcount <14)
+           {
+            antiDcount++;
+            antiDrift = antiDrift + 1;
+            driftTime = driftTime -100;
+           }
+driftTime++;
+
+
+            
             Serial.print("Das Fahrzeug  ");
 
             if(yaw>0)
             {
             
               //Ab hier muss mit dem grössten Zustand begonnen werden
-              if(yaw>165)
+              if(yaw>170)
               {
                 Serial.print("faehrt in die entgegengesetzte Richtung ");
                 if(KURVEBEENDEN == true)
@@ -272,7 +303,7 @@ if(zahlenerkennung == 1)
             }
             else if(yaw<0)
             {
-              if(yaw<-165)
+              if(yaw<-168)
               {
                 Serial.print("faehrt in die entgegengesetzte Richtung ");
                 if(KURVEBEENDEN == true)
@@ -291,6 +322,7 @@ if(zahlenerkennung == 1)
                     while(1)
                     {
                   stopMotor();
+                  
                     }
                   }
                 } // ende else
@@ -451,10 +483,10 @@ if(zahlenerkennung == 1)
                 {
                    
                 KURVEEINLEITEN = false;
-                if((abstandVorne()> 11||abstandVorne()== -1) && KURVEBEENDEN == false){ //war vorher auf 14
+                if((abstandVorne()> 10||abstandVorne()== -1) && KURVEBEENDEN == false){ //war vorher auf 14
                   //delay(2000);
                   
-                  while((abstandVorne()> 11||abstandVorne()== -1)){ //war vorher auf 14
+                  while((abstandVorne()> 10||abstandVorne()== -1)){ //war vorher auf 14
                     setSpeedGeradeAusLL();
                     faehrtGeradeAus();
                     
