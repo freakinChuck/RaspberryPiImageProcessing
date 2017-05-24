@@ -45,6 +45,8 @@ int parcoursInfo = 0;
 
 int driftOffset = 3.5;
 
+double korrekturWinkel = 0;
+
 
 
 
@@ -243,11 +245,45 @@ driftTime++;
                 }
                 else
                 {
+
+                  delay(100);
+
+                  
                   if(abstandHintenLinks()>20 && parcours == 0 || abstandHintenRechts() && parcours == 1)
                   {
                     while(1)
                     {
-                  stopMotor();
+                  //stopMotor();
+                  if(parcours == 0)                  
+                  {
+                    korrekturWinkel = ausrichtungParcoursRechts();
+                    if(korrekturWinkel<0)
+                    {
+                      fahreKurveNachLinks();
+                    }
+                    else{
+                      fahreKurveNachRechts();
+                    }
+                  }
+                  else
+                  {
+
+                     korrekturWinkel = ausrichtungParcoursLinks();
+                    if(korrekturWinkel<0)
+                    {
+                      fahreKurveNachLinks();
+                    }
+                    else{
+                      fahreKurveNachRechts();
+                    }
+                
+                    
+                  }
+                    
+                    
+                    
+                    
+                    
                     }
                   }
                 } // ende else
@@ -317,11 +353,37 @@ driftTime++;
                 }
                 else
                 {
+                  delay(100);
                  if(parcours == 0 && abstandHintenLinks()>20  ||  parcours == 1 && abstandHintenRechts()>20 )      //*************************hier änderung für parcours wahl
                   {
                     while(1)
                     {
-                  stopMotor();
+                  //stopMotor();
+                        if(parcours == 0)                  
+                  {
+                    korrekturWinkel = ausrichtungParcoursRechts();
+                    if(korrekturWinkel<0)
+                    {
+                      fahreKurveNachLinks();
+                    }
+                    else{
+                      fahreKurveNachRechts();
+                    }
+                  }
+                  else
+                  {
+
+                     korrekturWinkel = ausrichtungParcoursLinks();
+                    if(korrekturWinkel<0)
+                    {
+                      fahreKurveNachLinks();
+                    }
+                    else{
+                      fahreKurveNachRechts();
+                    }
+                
+                    
+                  }
                   
                     }
                   }
@@ -379,7 +441,7 @@ driftTime++;
 
             
            
-            if(pitch > 7 && startOffset == true)
+            if(pitch > 9 && startOffset == true)
             {
               
               Serial.print(" ,ist nach hinten gekippt  ");
@@ -401,7 +463,7 @@ driftTime++;
               
               
             }
-            else if(pitch > 10 && startOffset == true)
+            else if(pitch > 5 && startOffset == true)
             {
               Serial.print(" ,ist leicht nach hinten gekippt  ");
               if( treppeUeberwunden == true && KURVEABGESCHLOSSEN==false)
