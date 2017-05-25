@@ -25,11 +25,14 @@ boolean TorKorrekrurNachLinks = false;
 boolean  geradeAus = false;
 boolean offsetDone = false;
 boolean startOffset = false;
+boolean hasAlreadyHitThe179er = false;
 
  float yaw12 = 0;
  int antiDrift = 0;
  int driftTime = 0;
  int antiDcount = 0;
+
+ int korrekturDurchlauf = 0;
 
 double korrekturWinkel = 0;
 double aktuellerYAW = 0;
@@ -230,8 +233,9 @@ driftTime++;
             {
             
               //Ab hier muss mit dem grössten Zustand begonnen werden
-              if(yaw>179)
+              if(yaw>179 || (hasAlreadyHitThe179er&& yaw > 120))
               {
+                hasAlreadyHitThe179er = true;
                 Serial.print("faehrt in die entgegengesetzte Richtung ");
                 if(KURVEBEENDEN == true)
                 {
@@ -244,19 +248,27 @@ driftTime++;
                 }
                 else
                 {
+                  setSpeedKurve();
                   if(abstandHintenLinks()>20 && parcours == 0 || abstandHintenRechts() && parcours == 1)
                   {
                    // while(1)
                    // {
+                   if(korrekturDurchlauf == 0)
+                   {
                    aktuellerYAW = getYAW();
+                   korrekturDurchlauf++;
+                   }
+                   
                   stopMotor();
                    // }
                    if(parcours == 0)                  
                   {
+                    if(korrekturDurchlauf == 0){
                     korrekturWinkel = ausrichtungParcoursRechts();
+                    }
                     if(korrekturWinkel<0)
                     {
-                       if( (aktuellerYAW - korrekturWinkel) > yaw)
+                       if( (aktuellerYAW + korrekturWinkel) > yaw)
                       {
                       fahreKurveNachLinks();
                       }
@@ -266,7 +278,7 @@ driftTime++;
                       }
                     }
                     else{
-                       if( (aktuellerYAW + korrekturWinkel) > yaw)
+                       if( (aktuellerYAW + korrekturWinkel) < yaw)
                       {
                       fahreKurveNachRechts();
                       }
@@ -278,11 +290,13 @@ driftTime++;
                   }
                   else
                   {
-
+                     if(korrekturDurchlauf == 0)
+                     {
                      korrekturWinkel = ausrichtungParcoursLinks();
-                    if(korrekturWinkel<0)
+                     }
+                    if(korrekturWinkel < 0)
                     {
-                       if( (aktuellerYAW - korrekturWinkel) > yaw)
+                       if( (aktuellerYAW + korrekturWinkel) > yaw)
                       {
                       fahreKurveNachLinks();
                       }
@@ -293,7 +307,7 @@ driftTime++;
                     }
                     else{
                       
-                       if( (aktuellerYAW + korrekturWinkel) > yaw)
+                       if( (aktuellerYAW - korrekturWinkel) < yaw)
                       {
                       fahreKurveNachRechts();
                       }
@@ -310,7 +324,7 @@ driftTime++;
                  
                         
               }
-              else if(yaw>140)
+             /* else if(yaw>140)
               {
                  Serial.print("faehrt in die entgegengesetzte Richtung nach links");
               }
@@ -318,7 +332,7 @@ driftTime++;
               {
                  Serial.print("faehrt in die entgegengesetzte Richtung stark nach links ");
                  
-              }
+              }*/
               else if(yaw > 60)
               {
                  Serial.print("wechselt die Richtung ");
@@ -359,7 +373,7 @@ driftTime++;
             }
             else if(yaw<0)
             {
-              if(yaw<-160) //******************************************************* parcours rechts
+              if(yaw<-160 || (hasAlreadyHitThe179er && yaw < -120)) //******************************************************* parcours rechts
               {
                 Serial.print("faehrt in die entgegengesetzte Richtung ");
                 if(KURVEBEENDEN == true)
@@ -373,18 +387,26 @@ driftTime++;
                 }
                 else
                 {
+                  setSpeedKurve();
                  if(parcours == 0 && abstandHintenLinks()>20  ||  parcours == 1 && abstandHintenRechts()>20 )      //*************************hier änderung für parcours wahl
                   {
                    // while(1)
                    // {
+                   if(korrekturDurchlauf == 0)
+                   {
                    aktuellerYAW = getYAW();
+                   korrekturDurchlauf++;
+                   }
                   stopMotor();
                   if(parcours == 0)                  
                   {
+                    if(korrekturDurchlauf == 0)
+                    {
                     korrekturWinkel = ausrichtungParcoursRechts();
+                    }
                     if(korrekturWinkel<0)
                     {
-                      if( (aktuellerYAW - korrekturWinkel) > getYAW())
+                      if( (aktuellerYAW + korrekturWinkel) > yaw)
                       {
                       fahreKurveNachLinks();
                       }
@@ -395,7 +417,7 @@ driftTime++;
                     }
                     else{
                       
-                      if( (aktuellerYAW+ korrekturWinkel) > getYAW())
+                      if( (aktuellerYAW + korrekturWinkel) < yaw)
                       {
                       fahreKurveNachRechts();
                       }
@@ -408,28 +430,30 @@ driftTime++;
                   }
                   else
                   {
-
-                     korrekturWinkel = ausrichtungParcoursLinks();
+                    if(korrekturDurchlauf == 0)
+                    {
+                      korrekturWinkel = ausrichtungParcoursLinks();
+                    }
                     if(korrekturWinkel<0)
                     {
-                       if( (aktuellerYAW - korrekturWinkel) > getYAW())
+                      if( (aktuellerYAW + korrekturWinkel) > yaw)
                       {
-                      fahreKurveNachLinks();
+                        fahreKurveNachLinks();
                       }
                       else
                       {
-                      stopMotor();
+                        stopMotor();
                       }
                     }
-                    else{
-                      
-                      if( (aktuellerYAW + korrekturWinkel) > getYAW())
+                    else
+                    {  
+                      if( (aktuellerYAW + korrekturWinkel) < yaw)
                       {
-                      fahreKurveNachRechts();
+                        fahreKurveNachRechts();
                       }
                       else
                       {
-                      stopMotor();
+                        stopMotor();
                       }
                     }
                 
@@ -441,14 +465,14 @@ driftTime++;
                 } // ende else
                  
               }
-              else if(yaw<-140)
+             /** else if(yaw<-140)
               {
                 Serial.print("faehrt in die entgegengesetzte Richtung nach rechts ");
               }
               else if(yaw<-120)
               {
                 Serial.print("faehrt in die entgegengesetzte Richtung stark nach rechts ");
-              }
+              } */
               else if(yaw<-60)
               {
                 Serial.print("wechselt die Richtung ");

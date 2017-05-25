@@ -295,9 +295,15 @@ int ausrichtungParcoursRechts()
       abstandVR = abstandVorneRechts();
       messungVR++;
     }
-
+   if(abstandVR  == -1 && abstandHR == -1)
+    {
+       winkelKorrekturL  = 1;
+    }
+    else
+    {
     winkelKorrekturR = atan(abstandVR - abstandHR);
     ausgerichtet++;
+    }
     
   }
 
@@ -328,9 +334,15 @@ int ausrichtungParcoursLinks()
       abstandVL = abstandVorneLinks();
       messungVL++;
     }
-
+    if(abstandVL  == -1 && abstandHL == -1)
+    {
+       winkelKorrekturL  = 1;
+    }
+    else
+    {
     winkelKorrekturL = atan(abstandVL - abstandHL);
     ausgerichtet++;
+    }
     
   }
 

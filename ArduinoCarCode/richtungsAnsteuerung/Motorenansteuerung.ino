@@ -38,6 +38,12 @@ pinMode(in4, OUTPUT);
 
 }
 
+
+void setSpeedKurve()
+{
+  speedKurve = 100;
+}
+
 void setSpeedGeradeAusL()
 {
   speedGeradeAus = 150;
