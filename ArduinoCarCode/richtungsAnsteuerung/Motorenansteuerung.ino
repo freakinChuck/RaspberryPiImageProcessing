@@ -19,7 +19,7 @@ int in3 = 10;
 int in4 = 11;
 
 int speedGeradeAus = 100;
-int speedKurve = 150;
+int speedKurve = 190;
 
 
 
@@ -40,7 +40,7 @@ pinMode(in4, OUTPUT);
 
 void setSpeedGeradeAusL()
 {
-  speedGeradeAus = 65;
+  speedGeradeAus = 150;
 }
 
 
@@ -52,7 +52,7 @@ void setSpeedGeradeAusLL()
 
 void setSpeedGeradeAusH()
 {
-  speedGeradeAus = 80;
+  speedGeradeAus = 130;
 }
 
 void faehrtNachRechts()
@@ -120,9 +120,9 @@ void faehrtEGeradeAus()
 
 void nachHintenGekippt()
 {
-                   analogWrite(in1, 80);
+                   analogWrite(in1, 100);
                    digitalWrite(in2,LOW);
-                   analogWrite(in3, 80);
+                   analogWrite(in3, 100);
                    digitalWrite(in4, LOW);
                 // set speed to 200 out of possible range 0~255
                   digitalWrite(enB, HIGH);

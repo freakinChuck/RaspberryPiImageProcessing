@@ -213,7 +213,7 @@ if(zahlenerkennung == 1)
             float roll = (ypr[2] * 180)/M_PI-myROLLOffset;
             //Serial.print("yaw\t");
 
-           if(driftTime %100 == 0 && antiDcount <14)
+           if(driftTime %100 == 0 && antiDcount <50)
            {
             antiDcount++;
             antiDrift = antiDrift + 1;
@@ -229,7 +229,7 @@ driftTime++;
             {
             
               //Ab hier muss mit dem grössten Zustand begonnen werden
-              if(yaw>170)
+              if(yaw>172)
               {
                 Serial.print("faehrt in die entgegengesetzte Richtung ");
                 if(KURVEBEENDEN == true)
@@ -303,7 +303,7 @@ driftTime++;
             }
             else if(yaw<0)
             {
-              if(yaw<-168)
+              if(yaw<-160) //******************************************************* parcours rechts
               {
                 Serial.print("faehrt in die entgegengesetzte Richtung ");
                 if(KURVEBEENDEN == true)
@@ -379,7 +379,7 @@ driftTime++;
 
             
            
-            if(pitch > 7 && startOffset == true)
+            if(pitch > 9 && startOffset == true)
             {
               
               Serial.print(" ,ist nach hinten gekippt  ");
@@ -401,7 +401,7 @@ driftTime++;
               
               
             }
-            else if(pitch > 10 && startOffset == true)
+            else if(pitch > 6 && startOffset == true)
             {
               Serial.print(" ,ist leicht nach hinten gekippt  ");
               if( treppeUeberwunden == true && KURVEABGESCHLOSSEN==false)
@@ -410,21 +410,25 @@ driftTime++;
               }
               else
               {
-                EndeParcours = true;
+               // EndeParcours = true;
               }
             }
-            else if(pitch < -5 && startOffset == true)   //    war auf -20   am 19.05.2017
+            else if(pitch < -8 && startOffset == true)   //    war auf -20   am 19.05.2017
             {
               
               Serial.print(" ,ist nach vorne gekippt ");
               if(KURVEABGESCHLOSSEN == false)
               {
-            //nachVorneGekippt();
+            //nachVorneGekippt(); //*****************************************************************************************************************************
             faehrtGeradeAus();
             treppeUeberwunden = true;
             NACHVORNEGEKIPPT = true;
             NACHHINTENGEKIPPT = false;
             setSpeedGeradeAusH();
+              }
+              else
+              {
+               EndeParcours = true;
               }
              
             }
@@ -443,7 +447,7 @@ driftTime++;
                 {
                   Kurvenloop = true;
                   test++;
-                  delay(1200);
+                  delay(800);
                 }
                 
                 }
@@ -459,7 +463,7 @@ driftTime++;
                   }
                   
 
-                if(  ((yaw-startKurveOffset) > -90 && parcours == 0)||((yaw-startKurveOffset)  < 90 && parcours == 1)   && HALBEKURVEABGESCHLOSSEN == false) // war auf -85
+                if(  ((yaw-startKurveOffset) > -100 && parcours == 0)||((yaw-startKurveOffset)  < 110 && parcours == 1)   && HALBEKURVEABGESCHLOSSEN == false) // war auf -85
                 {  
                   KURVEEINLEITEN = true;
                  Serial.print("     Fahre Kurve !!!!!    ");
