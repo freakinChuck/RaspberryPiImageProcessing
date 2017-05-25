@@ -281,7 +281,7 @@ int distanzHR = (int)(distanceHR);
 //***********************************************************************************************************************************************************************************************************************************
 
 
-double ausrichtungParcoursRechts()
+int ausrichtungParcoursRechts()
 {
   if(ausgerichtet == 0)
   {
@@ -302,8 +302,8 @@ double ausrichtungParcoursRechts()
   }
 
   Serial.print("Resultat: ");
-  Serial.println(winkelKorrekturR);
-  return winkelKorrekturR;
+  Serial.println(winkelKorrekturR*180/(2*PI));
+  return winkelKorrekturR*180/(2*PI);
 
   
 }
@@ -314,7 +314,7 @@ double ausrichtungParcoursRechts()
 //***********************************************************************************************************************************************************************************************************************************
 
 
-double ausrichtungParcoursLinks()
+int ausrichtungParcoursLinks()
 {
   if(ausgerichtet == 0)
   {
@@ -335,8 +335,8 @@ double ausrichtungParcoursLinks()
   }
 
   Serial.print("Resultat: ");
-  Serial.println(winkelKorrekturL);
-  return winkelKorrekturL;
+  Serial.println(winkelKorrekturL*180/(2*PI));
+  return winkelKorrekturL*180/(2*PI);
 
   
 }

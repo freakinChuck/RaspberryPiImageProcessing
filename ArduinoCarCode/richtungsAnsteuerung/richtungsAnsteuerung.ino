@@ -31,7 +31,8 @@ boolean startOffset = false;
  int driftTime = 0;
  int antiDcount = 0;
 
-
+double korrekturWinkel = 0;
+double aktuellerYAW = 0;
 
 int messung = 0;
 int erkanntezahl = 0;
@@ -44,8 +45,6 @@ int test = 0;
 int parcoursInfo = 0;
 
 int driftOffset = 3.5;
-
-double korrekturWinkel = 0;
 
 
 
@@ -231,7 +230,7 @@ driftTime++;
             {
             
               //Ab hier muss mit dem grössten Zustand begonnen werden
-              if(yaw>172)
+              if(yaw>179)
               {
                 Serial.print("faehrt in die entgegengesetzte Richtung ");
                 if(KURVEBEENDEN == true)
@@ -245,24 +244,36 @@ driftTime++;
                 }
                 else
                 {
-
-                  delay(100);
-
-                  
                   if(abstandHintenLinks()>20 && parcours == 0 || abstandHintenRechts() && parcours == 1)
                   {
-                    while(1)
-                    {
-                  //stopMotor();
-                  if(parcours == 0)                  
+                   // while(1)
+                   // {
+                   aktuellerYAW = getYAW();
+                  stopMotor();
+                   // }
+                   if(parcours == 0)                  
                   {
                     korrekturWinkel = ausrichtungParcoursRechts();
                     if(korrekturWinkel<0)
                     {
+                       if( (aktuellerYAW - korrekturWinkel) > yaw)
+                      {
                       fahreKurveNachLinks();
+                      }
+                      else
+                      {
+                      stopMotor();
+                      }
                     }
                     else{
+                       if( (aktuellerYAW + korrekturWinkel) > yaw)
+                      {
                       fahreKurveNachRechts();
+                      }
+                      else
+                      {
+                      stopMotor();
+                      }
                     }
                   }
                   else
@@ -271,20 +282,29 @@ driftTime++;
                      korrekturWinkel = ausrichtungParcoursLinks();
                     if(korrekturWinkel<0)
                     {
+                       if( (aktuellerYAW - korrekturWinkel) > yaw)
+                      {
                       fahreKurveNachLinks();
+                      }
+                      else
+                      {
+                      stopMotor();
+                      }
                     }
                     else{
+                      
+                       if( (aktuellerYAW + korrekturWinkel) > yaw)
+                      {
                       fahreKurveNachRechts();
+                      }
+                      else
+                      {
+                      stopMotor();
+                      }
                     }
                 
                     
                   }
-                    
-                    
-                    
-                    
-                    
-                    }
                   }
                 } // ende else
                  
@@ -353,21 +373,37 @@ driftTime++;
                 }
                 else
                 {
-                  delay(100);
                  if(parcours == 0 && abstandHintenLinks()>20  ||  parcours == 1 && abstandHintenRechts()>20 )      //*************************hier änderung für parcours wahl
                   {
-                    while(1)
-                    {
-                  //stopMotor();
-                        if(parcours == 0)                  
+                   // while(1)
+                   // {
+                   aktuellerYAW = getYAW();
+                  stopMotor();
+                  if(parcours == 0)                  
                   {
                     korrekturWinkel = ausrichtungParcoursRechts();
                     if(korrekturWinkel<0)
                     {
+                      if( (aktuellerYAW - korrekturWinkel) > getYAW())
+                      {
                       fahreKurveNachLinks();
+                      }
+                      else
+                      {
+                      stopMotor();
+                      }
                     }
                     else{
+                      
+                      if( (aktuellerYAW+ korrekturWinkel) > getYAW())
+                      {
                       fahreKurveNachRechts();
+                      }
+                      else
+                      {
+                      stopMotor();
+                      }
+                      
                     }
                   }
                   else
@@ -376,16 +412,31 @@ driftTime++;
                      korrekturWinkel = ausrichtungParcoursLinks();
                     if(korrekturWinkel<0)
                     {
+                       if( (aktuellerYAW - korrekturWinkel) > getYAW())
+                      {
                       fahreKurveNachLinks();
+                      }
+                      else
+                      {
+                      stopMotor();
+                      }
                     }
                     else{
+                      
+                      if( (aktuellerYAW + korrekturWinkel) > getYAW())
+                      {
                       fahreKurveNachRechts();
+                      }
+                      else
+                      {
+                      stopMotor();
+                      }
                     }
                 
                     
                   }
                   
-                    }
+                    //}
                   }
                 } // ende else
                  
@@ -454,7 +505,7 @@ driftTime++;
               }
               else
               {
-                EndeParcours = true;
+                //EndeParcours = true;
               }
               
               
@@ -463,11 +514,7 @@ driftTime++;
               
               
             }
-<<<<<<< HEAD
             else if(pitch > 6 && startOffset == true)
-=======
-            else if(pitch > 5 && startOffset == true)
->>>>>>> 619ba6bc72d5584a86b873e4976aa8e08c6e9887
             {
               Serial.print(" ,ist leicht nach hinten gekippt  ");
               if( treppeUeberwunden == true && KURVEABGESCHLOSSEN==false)
@@ -529,7 +576,7 @@ driftTime++;
                   }
                   
 
-                if(  ((yaw-startKurveOffset) > -100 && parcours == 0)||((yaw-startKurveOffset)  < 110 && parcours == 1)   && HALBEKURVEABGESCHLOSSEN == false) // war auf -85
+                if(  ((yaw-startKurveOffset) > -100 && parcours == 0)||((yaw-startKurveOffset)  < 115 && parcours == 1)   && HALBEKURVEABGESCHLOSSEN == false) // war auf -85
                 {  
                   KURVEEINLEITEN = true;
                  Serial.print("     Fahre Kurve !!!!!    ");
