@@ -297,7 +297,7 @@ int ausrichtungParcoursRechts()
     }
    if(abstandVR  == -1 && abstandHR == -1)
     {
-       winkelKorrekturL  = 1;
+       winkelKorrekturL  = 0;
     }
     else
     {
@@ -336,7 +336,7 @@ int ausrichtungParcoursLinks()
     }
     if(abstandVL  == -1 && abstandHL == -1)
     {
-       winkelKorrekturL  = 1;
+       winkelKorrekturL  = 0;
     }
     else
     {

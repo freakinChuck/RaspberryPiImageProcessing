@@ -1,6 +1,6 @@
 // PIN 45
 
-#define schalterPin 45
+#define schalterPin 40
 
 void umschalterSetup()
 {
