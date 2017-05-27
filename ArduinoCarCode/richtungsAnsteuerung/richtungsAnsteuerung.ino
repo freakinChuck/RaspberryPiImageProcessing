@@ -270,7 +270,7 @@ driftTime++;
                   if(abstandHintenLinks()>20 && parcours == 0 || abstandHintenRechts() && parcours == 1)
                   {
                     motorBlockiert = 0;
-                    loeseMotor();
+                   // loeseMotor();
                     if(parcours == 0)
                     {
                      setAbstandVorhanden(abstandVorneRechts());
@@ -289,10 +289,7 @@ driftTime++;
                    }
 
                   }
-                  else
-                  {
-                    
-                  }
+                 
                   }
                 } // ende else
                  
@@ -366,7 +363,7 @@ driftTime++;
                  if(parcours == 0 && abstandHintenLinks()>20  ||  parcours == 1 && abstandHintenRechts()>20 )      //*************************hier änderung für parcours wahl
                   {
                     motorBlockiert = 0;
-                    loeseMotor();
+                   // loeseMotor();
                     if(parcours==0)
                     {
                      setAbstandVorhanden(abstandVorneRechts());
