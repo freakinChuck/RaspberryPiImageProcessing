@@ -48,6 +48,10 @@ int parcoursInfo = 0;
 int driftOffset = 3.5;
 
 int parcoursLinksOffset = 0;
+int absCnt = 0;
+
+int abstandRes = 0;
+int z = 0;
 
 
 
@@ -73,6 +77,7 @@ TCCR0B = _BV(CS00) | _BV(CS02);  //1024
   ultraschallSetup();
   ampelSetup();
   umschalterSetup();
+   tasteSetup();
   parcours = schalterstellung();
   pinMode(startSignalPin, OUTPUT);
 
@@ -115,6 +120,8 @@ int mpuKorrektur()
 
 
 void loop() {
+
+  setRomanNumber(4); 
 
 
 if(motorBlockiert == 1)
@@ -164,7 +171,7 @@ if(zahlenerkennung == 1)
 
   delay(1000);
   erkanntezahl = zahlenErkennung();
-  setRomanNumber(1);    
+     
   messung ++;
  
   
@@ -366,8 +373,27 @@ driftTime++;
                    // loeseMotor();
                     if(parcours==0)
                     {
-                     setAbstandVorhanden(abstandVorneRechts());
+                     for(;absCnt < 10;absCnt++)
+                     {
+
+                      stopMotor();
+
+                      
+
+                    abstandRes =  abstandVorneRechts();
+
+                    delay(100);
+                      
+                     }
+
+                    
+                      if(z == 0)
+                      {
+                     setAbstandVorhanden(abstandRes);
                       moveMotor ();
+                      delay(1000);
+                      z++;
+                      }
                      
                          if(abstandVorne()> 4 )
                    {

@@ -1,4 +1,3 @@
-
 #include <Stepper.h>
 #include <math.h>
 
@@ -7,7 +6,7 @@
 const double schritteProUmdrehung = 400.0;  // Anzahl Schritte des Stepper Motors
 int abstandVorhanden = 0; //gemessener Abstand durch Ultraschall
 int gerechneterAbstand = 0;
-int romanNumber = 1; //ausgelesene Römisch Zahl
+int romanNumber = 2; //ausgelesene Römisch Zahl
 
 int abstandFuenf = 135; // Absolut Koordinaten der Tasten
 int abstandVier = 195;
@@ -19,10 +18,10 @@ int i=1;
 Stepper myStepper(schritteProUmdrehung, 41, 42, 43, 44); // Initialisierung Stepper
 
 
-void tasterSetup() {
+void tasteSetup() {
   // set the speed at 60 rpm:
   myStepper.setSpeed(10);
-  Serial.begin(9600);  
+    
   pinMode(41,OUTPUT);
 pinMode(42,OUTPUT);
 pinMode(43,OUTPUT);
@@ -41,38 +40,41 @@ pinMode(44,OUTPUT);
   //Serial.print(steps);
   // Serial.print('\n');
     if (abstand>0) {    // Handling von Abständen kleiner als 0 
-        steps =-(steps / (360/schritteProUmdrehung)); // umrechen von degree in steps  
+        steps =(steps / (360/schritteProUmdrehung)); // umrechen von degree in steps  
       }
     else {
-       steps = (steps /(360/schritteProUmdrehung)); 
+       steps = -(steps /(360/schritteProUmdrehung)); 
        }            
     steps = round(steps); 
+    Serial.println("\n   Schritte:   ");
     Serial.print(steps);
+     Serial.println("   Abstand:   ");
+    Serial.print(abstand);
     return steps;
   }
 
   void moveMotor (){
       switch (romanNumber){
     case 1: 
-        gerechneterAbstand = abstandEins-155-abstandVorhanden*10;
+        gerechneterAbstand = abstandEins-195-abstandVorhanden*10;
         myStepper.step(calculateSteps(gerechneterAbstand));  // Je nach Parcourseite muss 155mm oder 65mm angepasst werden
     break;
     case 2:
-        gerechneterAbstand = abstandZwei-155-abstandVorhanden*10;
+        gerechneterAbstand = abstandZwei-195-abstandVorhanden*10;
         myStepper.step(calculateSteps(gerechneterAbstand));  
 
     break;
     case 3:
-       gerechneterAbstand = abstandDrei-155-abstandVorhanden*10;
+       gerechneterAbstand = abstandDrei-195-abstandVorhanden*10;
        myStepper.step(calculateSteps(gerechneterAbstand));  
 
     break;
     case 4:
-        gerechneterAbstand = abstandVier-65-abstandVorhanden*10;
+        gerechneterAbstand = abstandVier-105-abstandVorhanden*10;
         myStepper.step(calculateSteps(gerechneterAbstand)); 
     break;
     case 5:
-       gerechneterAbstand = abstandFuenf-65-abstandVorhanden*10;
+       gerechneterAbstand = abstandFuenf-105-abstandVorhanden*10;
        myStepper.step(calculateSteps(gerechneterAbstand));
   
     break;
@@ -92,9 +94,9 @@ pinMode(44,OUTPUT);
 
  void blockiereMotor()
  {
-  digitalWrite(41,HIGH);
+ // digitalWrite(41,HIGH);
 
-digitalWrite(43,HIGH);
+//digitalWrite(43,HIGH);
  }
 
  void loeseMotor()
