@@ -5,7 +5,7 @@
 /* Mit dem Switch wird die Positon des Taster ausgerechnet. Mit der Funktion claculate Steps wird anschliessend ausgerechnet, wie viele Schritte der Stepper Motor machen muss
 */
 const double schritteProUmdrehung = 400.0;  // Anzahl Schritte des Stepper Motors
-int abstandVorhanden = 180; //gemessener Abstand durch Ultraschall
+int abstandVorhanden = 0; //gemessener Abstand durch Ultraschall
 int gerechneterAbstand = 0;
 int romanNumber = 1; //ausgelesene Römisch Zahl
 
@@ -21,8 +21,12 @@ Stepper myStepper(schritteProUmdrehung, 41, 42, 43, 44); // Initialisierung Step
 
 void tasterSetup() {
   // set the speed at 60 rpm:
-  myStepper.setSpeed(60);
+  myStepper.setSpeed(10);
   Serial.begin(9600);  
+  pinMode(41,OUTPUT);
+pinMode(42,OUTPUT);
+pinMode(43,OUTPUT);
+pinMode(44,OUTPUT);
 }
 
  int calculateSteps(double abstand){
@@ -50,25 +54,25 @@ void tasterSetup() {
   void moveMotor (){
       switch (romanNumber){
     case 1: 
-        gerechneterAbstand = abstandEins-155-abstandVorhanden;
+        gerechneterAbstand = abstandEins-155-abstandVorhanden*10;
         myStepper.step(calculateSteps(gerechneterAbstand));  // Je nach Parcourseite muss 155mm oder 65mm angepasst werden
     break;
     case 2:
-        gerechneterAbstand = abstandZwei-155-abstandVorhanden;
+        gerechneterAbstand = abstandZwei-155-abstandVorhanden*10;
         myStepper.step(calculateSteps(gerechneterAbstand));  
 
     break;
     case 3:
-       gerechneterAbstand = abstandDrei-155-abstandVorhanden;
+       gerechneterAbstand = abstandDrei-155-abstandVorhanden*10;
        myStepper.step(calculateSteps(gerechneterAbstand));  
 
     break;
     case 4:
-        gerechneterAbstand = abstandVier-65-abstandVorhanden;
+        gerechneterAbstand = abstandVier-65-abstandVorhanden*10;
         myStepper.step(calculateSteps(gerechneterAbstand)); 
     break;
     case 5:
-       gerechneterAbstand = abstandFuenf-65-abstandVorhanden;
+       gerechneterAbstand = abstandFuenf-65-abstandVorhanden*10;
        myStepper.step(calculateSteps(gerechneterAbstand));
   
     break;
@@ -84,5 +88,19 @@ void tasterSetup() {
  void setRomanNumber(int number)
  {
   romanNumber = number;
+ }
+
+ void blockiereMotor()
+ {
+  digitalWrite(41,HIGH);
+
+digitalWrite(43,HIGH);
+ }
+
+ void loeseMotor()
+ {
+  digitalWrite(41,LOW);
+
+digitalWrite(43,LOW);
  }
 

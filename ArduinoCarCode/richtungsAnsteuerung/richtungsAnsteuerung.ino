@@ -31,6 +31,7 @@ boolean hasAlreadyHitThe179er = false;
  int antiDrift = 0;
  int driftTime = 0;
  int antiDcount = 0;
+ int motorBlockiert = 1;
 
 
 
@@ -45,6 +46,8 @@ int test = 0;
 int parcoursInfo = 0;
 
 int driftOffset = 3.5;
+
+int parcoursLinksOffset = 0;
 
 
 
@@ -113,6 +116,23 @@ int mpuKorrektur()
 
 void loop() {
 
+
+if(motorBlockiert == 1)
+{
+
+  blockiereMotor();
+
+}
+else
+{
+  loeseMotor();
+}
+  
+  if(parcours == 1)
+  {
+    parcoursLinksOffset = 4;
+  }
+
 for(parcoursInfo;parcoursInfo<5;parcoursInfo++)
 {
   char* parcoursWahl;
@@ -144,7 +164,7 @@ if(zahlenerkennung == 1)
 
   delay(1000);
   erkanntezahl = zahlenErkennung();
-  setRomanNumber(2);    
+  setRomanNumber(1);    
   messung ++;
  
   
@@ -209,7 +229,7 @@ if(zahlenerkennung == 1)
             mpu.dmpGetGravity(&gravity, &q);
             mpu.dmpGetYawPitchRoll(ypr, &q, &gravity);
          
-            float yaw = ((ypr[0] * 180)/M_PI)-myYAWOffset - antiDrift  ;            
+            float yaw = ((ypr[0] * 180)/M_PI)-myYAWOffset - antiDrift  +parcoursLinksOffset  ;            
             //float yawGefiltert = yaw -yawKalibriert;
             float pitch = (ypr[1] * 180)/M_PI-myPITCHOffset;
             float roll = (ypr[2] * 180)/M_PI-myROLLOffset;
@@ -231,7 +251,7 @@ driftTime++;
             {
             
               //Ab hier muss mit dem grössten Zustand begonnen werden
-              if(yaw>179 || (hasAlreadyHitThe179er&& yaw > 120))
+              if(yaw>185 || (hasAlreadyHitThe179er&& yaw > 120))
               {
                 hasAlreadyHitThe179er = true;
 
@@ -249,11 +269,14 @@ driftTime++;
                 {
                   if(abstandHintenLinks()>20 && parcours == 0 || abstandHintenRechts() && parcours == 1)
                   {
+                    motorBlockiert = 0;
+                    loeseMotor();
                     if(parcours == 0)
                     {
                      setAbstandVorhanden(abstandVorneRechts());
                       moveMotor ();
-                         if(abstandVorne()> 5 )
+                     
+                         if(abstandVorne()> 4  )
                    {
                     faehrtGeradeAus();
                    }
@@ -342,12 +365,14 @@ driftTime++;
                 {
                  if(parcours == 0 && abstandHintenLinks()>20  ||  parcours == 1 && abstandHintenRechts()>20 )      //*************************hier änderung für parcours wahl
                   {
-
+                    motorBlockiert = 0;
+                    loeseMotor();
                     if(parcours==0)
                     {
                      setAbstandVorhanden(abstandVorneRechts());
                       moveMotor ();
-                         if(abstandVorne()> 5 )
+                     
+                         if(abstandVorne()> 4 )
                    {
                     faehrtGeradeAus();
                    }
