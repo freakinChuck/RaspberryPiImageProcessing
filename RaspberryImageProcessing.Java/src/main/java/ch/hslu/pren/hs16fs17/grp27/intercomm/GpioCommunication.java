@@ -23,6 +23,8 @@ public class GpioCommunication {
     private final GpioPinDigitalOutput displayBottomLeftPin;
     private final GpioPinDigitalOutput displayBottomRightPin;
 
+    private final GpioPinDigitalInput arduinoReadyPin;
+
 
     public GpioCommunication(){
         final GpioController gpio = GpioFactory.getInstance();
@@ -58,6 +60,8 @@ public class GpioCommunication {
         displayBottomLeftPin.setShutdownOptions(true, PinState.LOW);
         displayBottomRightPin = gpio.provisionDigitalOutputPin(Configuration.DISPLAYBOTTOMRIGHTPIN);
         displayBottomRightPin.setShutdownOptions(true, PinState.LOW);
+
+        arduinoReadyPin = gpio.provisionDigitalInputPin(Configuration.READYSIGNALPIN);
     }
 
 
@@ -84,6 +88,13 @@ public class GpioCommunication {
         displayBottomRightPin.setState(PinState.HIGH);
 
 
+    }
+
+    public boolean IsArduinoReady() {
+        if (!Configuration.DOCOMMUNICATION)
+            return true;
+
+        return arduinoReadyPin.isHigh();
     }
 
     public void SendNumber(int number){

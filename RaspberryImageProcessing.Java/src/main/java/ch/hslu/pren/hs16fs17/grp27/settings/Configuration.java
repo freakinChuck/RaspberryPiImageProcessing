@@ -8,10 +8,12 @@ import com.pi4j.io.gpio.RaspiPin;
  */
 public class Configuration {
 
-    public static final int SIDECAMERAINDEX = 0;
+    public static final int SIDECAMERAINDEX = 1;
     public static final int FRONTCAMERAINDEX = 0;
 
     public static final Pin STARTSIGNALPIN = RaspiPin.GPIO_01;
+
+    public static final Pin READYSIGNALPIN = RaspiPin.GPIO_05;
 
 
     public static final Pin BIT1SIGNALPIN = RaspiPin.GPIO_02;
@@ -27,7 +29,7 @@ public class Configuration {
     public static final Pin DISPLAYBOTTOMLEFTPIN = RaspiPin.GPIO_25;
     public static final Pin DISPLAYBOTTOMRIGHTPIN = RaspiPin.GPIO_23;
 
-    public static final boolean DOTAKEIMAGES = true;
+    public static final boolean DOTAKEIMAGES = false;
     public static final boolean DOCOMMUNICATION = true;
 
 }
