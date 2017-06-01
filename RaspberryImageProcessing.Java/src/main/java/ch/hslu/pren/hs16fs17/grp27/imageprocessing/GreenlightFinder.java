@@ -42,7 +42,7 @@ public class GreenlightFinder {
 
             //Find Circles with Hough algo.
             Imgproc.HoughCircles(green_hue_range, circles, Imgproc.CV_HOUGH_GRADIENT,
-                    1.0, green_hue_range.rows()/8, iCannyUpperThreshold, iAccumulator,
+                    1.0, green_hue_range.rows(), iCannyUpperThreshold, iAccumulator,
                     iMinRadius, iMaxRadius);
             if (circles.cols() > 0) {
                 for (int x = 0; x < circles.cols(); x++) {

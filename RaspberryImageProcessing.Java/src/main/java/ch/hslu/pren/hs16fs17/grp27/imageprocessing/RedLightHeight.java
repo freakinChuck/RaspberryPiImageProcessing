@@ -52,7 +52,7 @@ public class RedLightHeight {
 
             //Find Circles with Hough algo.
             Imgproc.HoughCircles(red_hue_image, circles, Imgproc.CV_HOUGH_GRADIENT,
-                    1.0, red_hue_image.rows()/8, iCannyUpperThreshold, iAccumulator,
+                    1.0, red_hue_image.rows(), iCannyUpperThreshold, iAccumulator,
                     iMinRadius, iMaxRadius);
 
             // Paint Circles in Picture and print msg
