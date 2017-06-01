@@ -38,6 +38,26 @@ public class Application {
 
     public static void main(String[] args) throws InterruptedException {
 
+        GpioCommunication communication;
+
+        if (Configuration.DOCOMMUNICATION) {
+            System.out.println("Waiting for Arduino");
+
+            communication = new GpioCommunication();
+            communication.ClearPinData();
+
+            communication.DisplayTilt();
+            while (!communication.IsArduinoReady()){
+                Thread.sleep(100);
+            }
+            communication.ClearPinData();
+            communication.InitiateWaitState();
+
+            System.out.println("Arduino Ready");
+
+        }
+
+
         Application.SetUpEnvironment();
 
         Camera frontCamera = new Camera(Configuration.FRONTCAMERAINDEX);
@@ -45,17 +65,8 @@ public class Application {
         GreenlightFinder greenlightFinder = new GreenlightFinder();
         RedBarFinder redBarFinder = new RedBarFinder();
         RomanCharacterFinder romanCharacterFinder = new RomanCharacterFinder();
-        GpioCommunication communication;
         int frontCameraWidth;
         int frontCameraHeight;
-
-
-
-        if (Configuration.DOCOMMUNICATION) {
-            communication = new GpioCommunication();
-            communication.ClearPinData();
-            communication.InitiateWaitState();
-        }
 
         int count = 0;
         while (!frontCamera.Available() && count++ < 20){
