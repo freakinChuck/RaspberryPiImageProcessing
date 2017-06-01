@@ -104,7 +104,7 @@ public class Application {
             new File(folderBasePath).mkdirs();
         }
 
-        Rect upperHalfOfImage = new Rect(frontCameraWidth/3,frontCameraHeight/3,frontCameraWidth/3*2,frontCameraHeight/3*2);
+        Rect upperHalfOfImage = new Rect(0,frontCameraHeight/3,frontCameraWidth,frontCameraHeight/3*2);
         while(!redLightHeight.FindRedLightHeight(new Mat(frontCamera.Capture(),upperHalfOfImage))){
             System.out.println("waiting for Redlight");
             try {
