@@ -40,7 +40,7 @@ public class Application {
 
         GpioCommunication communication;
 
-        if (Configuration.DOCOMMUNICATION) {
+        if (Configuration.DOCOMMUNICATION && Configuration.DOWAITFORARDUINO) {
             System.out.println("Waiting for Arduino");
 
             communication = new GpioCommunication();
@@ -54,6 +54,14 @@ public class Application {
             communication.InitiateWaitState();
 
             System.out.println("Arduino Ready");
+
+        }
+        else if (Configuration.DOCOMMUNICATION) {
+            communication = new GpioCommunication();
+            communication.ClearPinData();
+            communication.InitiateWaitState();
+
+            System.out.println("ArduinoWait Deactivated");
 
         }
 
@@ -110,7 +118,7 @@ public class Application {
         //Rect belowRedLight = new Rect(redLightHeight.getRedXPos(), 0, frontCameraWidth-redLightHeight.getRedXPos(),frontCameraHeight);
         Rect belowRedLight = new Rect(0,0,redLightHeight.getRedXPos(),frontCameraWidth);
 
-        while (!greenlightFinder.ImageContainsGreenLight(new Mat(frontCamera.Capture(),belowRedLight))){
+        while (!greenlightFinder.ImageContainsGreenLight(frontCamera.Capture())){
             System.out.println("waiting for Greenlight");
             try {
                 Thread.sleep(100);

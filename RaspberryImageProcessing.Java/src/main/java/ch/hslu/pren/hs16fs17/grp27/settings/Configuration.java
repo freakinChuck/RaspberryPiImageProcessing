@@ -32,4 +32,6 @@ public class Configuration {
     public static final boolean DOTAKEIMAGES = false;
     public static final boolean DOCOMMUNICATION = true;
 
+    public static final boolean DOWAITFORARDUINO = true;
+
 }
