@@ -209,4 +209,60 @@ public class GpioCommunication {
         displayBottomLeftPin.low();
         displayBottomRightPin.low();
     }
+
+    public void DisplayRedlightWait(){
+        displayDotPin.high();
+
+        displayTopMidPin.low();
+        displayTopLeftPin.high();
+        displayTopRightPin.high();
+
+        displayMidPin.low();
+
+        displayBottomMidPin.low();
+        displayBottomLeftPin.high();
+        displayBottomRightPin.high();
+    }
+
+    public void DisplayGreenlightWait(){
+        displayDotPin.high();
+
+        displayTopMidPin.high();
+        displayTopLeftPin.high();
+        displayTopRightPin.high();
+
+        displayMidPin.low();
+
+        displayBottomMidPin.high();
+        displayBottomLeftPin.high();
+        displayBottomRightPin.high();
+    }
+
+    public void DisplayGo(){
+        displayDotPin.low();
+
+        displayTopMidPin.high();
+        displayTopLeftPin.high();
+        displayTopRightPin.high();
+
+        displayMidPin.high();
+
+        displayBottomMidPin.high();
+        displayBottomLeftPin.high();
+        displayBottomRightPin.high();
+    }
+
+    public void DisplayRedbarFound(){
+        displayDotPin.high();
+
+        displayTopMidPin.high();
+        displayTopLeftPin.low();
+        displayTopRightPin.low();
+
+        displayMidPin.high();
+
+        displayBottomMidPin.high();
+        displayBottomLeftPin.low();
+        displayBottomRightPin.low();
+    }
 }

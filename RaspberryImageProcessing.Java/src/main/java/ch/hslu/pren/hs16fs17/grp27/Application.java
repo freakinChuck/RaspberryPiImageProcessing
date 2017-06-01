@@ -104,6 +104,10 @@ public class Application {
             new File(folderBasePath).mkdirs();
         }
 
+
+        if (Configuration.DOCOMMUNICATION)
+            communication.DisplayRedlightWait();
+
         Rect upperHalfOfImage = new Rect(0,frontCameraHeight/3,frontCameraWidth,frontCameraHeight/3*2);
         while(!redLightHeight.FindRedLightHeight(new Mat(frontCamera.Capture(),upperHalfOfImage))){
             System.out.println("waiting for Redlight");
@@ -113,7 +117,10 @@ public class Application {
             }
         }
 
+
         System.out.println("Redlight found at: " + redLightHeight.getRedXPos());
+        if (Configuration.DOCOMMUNICATION)
+            communication.DisplayGreenlightWait();
 
         //Rect belowRedLight = new Rect(redLightHeight.getRedXPos(), 0, frontCameraWidth-redLightHeight.getRedXPos(),frontCameraHeight);
         Rect belowRedLight = new Rect(0,0,redLightHeight.getRedXPos(),frontCameraWidth);
@@ -130,6 +137,9 @@ public class Application {
         
         System.out.println("Green light Found");
         frontCamera.Shutdown();
+
+        if (Configuration.DOCOMMUNICATION)
+            communication.DisplayGo();
 
         if (Configuration.DOCOMMUNICATION)
             communication.SendStartSignal();
@@ -171,6 +181,9 @@ public class Application {
             System.out.println("Picture taken" + i);
             matrixesToEvaluate[i] = sideCamera.Capture();
         }
+
+        if (Configuration.DOCOMMUNICATION)
+            communication.DisplayRedbarFound();
 
         for (int i = 0; i < matrixesToEvaluate.length; i++) {
             redBarImages[i+1] = redBarFinder.FindRedDoubleBar(matrixesToEvaluate[i], i);
@@ -252,7 +265,6 @@ public class Application {
 
         PrintNumberInConsole(maxKey, maxNumbers, objects.length);
 
-
         if (Configuration.DOTAKEIMAGES) {
             for (int i = 0; i < matrixesToEvaluate.length; i++) {
                 Mat mat = matrixesToEvaluate[i];
@@ -271,6 +283,8 @@ public class Application {
             }
             System.out.println("File write done");
         }
+
+        Thread.sleep(10000);
 
     }
 
