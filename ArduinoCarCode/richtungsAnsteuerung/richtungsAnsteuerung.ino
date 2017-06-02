@@ -3,8 +3,8 @@
 #include <avr/wdt.h>
 
 int parcours = 0; //0 = Parcours rechts    1 = Parcours Links
-int ampelerkennung = 0;    //Ampelerkennung ausgeschaltet = 0, eingeschaltet = 1
-int zahlenerkennung = 0;   //Zahlenerkennung ausgeschaltet = 0, eingeschaltet = 1
+int ampelerkennung = 1;    //Ampelerkennung ausgeschaltet = 0, eingeschaltet = 1
+int zahlenerkennung = 1;   //Zahlenerkennung ausgeschaltet = 0, eingeschaltet = 1
 int startSignalPin = 45;
 
 
@@ -31,6 +31,11 @@ boolean hasAlreadyHitThe179er = false;
  int antiDrift = 0;
  int driftTime = 0;
  int antiDcount = 0;
+
+int antiDrift2 = 0;
+ int driftTime2 = 0;
+ int antiDcount2 = 0;
+ 
  int motorBlockiert = 1;
 
 
@@ -121,7 +126,7 @@ int mpuKorrektur()
 
 void loop() {
 
-  setRomanNumber(4); 
+ // setRomanNumber(3); 
 
 
 if(motorBlockiert == 1)
@@ -174,7 +179,7 @@ if(zahlenerkennung == 1)
      
   messung ++;
  
-  
+  setRomanNumber(erkanntezahl); 
   
  }
  }
@@ -242,12 +247,23 @@ if(zahlenerkennung == 1)
             float roll = (ypr[2] * 180)/M_PI-myROLLOffset;
             //Serial.print("yaw\t");
 
-           if(driftTime %100 == 0 && antiDcount <50)
+           if(driftTime %100 == 0 && antiDcount <12)
            {
             antiDcount++;
             antiDrift = antiDrift + 1;
             driftTime = driftTime -100;
            }
+
+           /*if(driftTime2 % 1000 == 0 && antiDcount2 <9000)
+           {
+
+             antiDcount2++;
+            antiDrift2 = antiDrift2 + 5;
+            driftTime2 = driftTime2 -1000;
+            
+           }*/
+          
+           
 driftTime++;
 
 
@@ -274,16 +290,34 @@ driftTime++;
                 }
                 else
                 {
-                  if(abstandHintenLinks()>20 && parcours == 0 || abstandHintenRechts() && parcours == 1)
+                 /* if( abstandHintenRechts()>20 )
                   {
-                    motorBlockiert = 0;
-                   // loeseMotor();
-                    if(parcours == 0)
-                    {
-                     setAbstandVorhanden(abstandVorneRechts());
+
+                    setParcours();
+                    
+                     for(;absCnt < 10;absCnt++)
+                     {
+
+                      stopMotor();
+
+                      
+
+                    abstandRes =  abstandVorneLinks();
+
+                    delay(100);
+                      
+                     }
+
+                    
+                      if(z == 0)
+                      {
+                     setAbstandVorhanden(abstandRes);
                       moveMotor ();
+                      delay(1000);
+                      z++;
+                      }
                      
-                         if(abstandVorne()> 4  )
+                         if(abstandVorne()> 4 )
                    {
                     faehrtGeradeAus();
                    }
@@ -294,10 +328,9 @@ driftTime++;
                     stopMotor();
                     }
                    }
-
-                  }
+                   
                  
-                  }
+                  }*/
                 } // ende else
                  
                         
@@ -373,6 +406,7 @@ driftTime++;
                    // loeseMotor();
                     if(parcours==0)
                     {
+                      
                      for(;absCnt < 10;absCnt++)
                      {
 
@@ -406,8 +440,59 @@ driftTime++;
                     stopMotor();
                     }
                    }
+                   
 
-                  }}
+                  }
+
+                  else
+                  {
+
+
+                      //setParcours();
+                    
+                     for(;absCnt < 10;absCnt++)
+                     {
+
+                      stopMotor();
+
+                      
+
+                    abstandRes =  abstandVorneLinks();
+
+                    delay(100);
+                      
+                     }
+
+                    
+                      if(z == 0)
+                      {
+                     setAbstandVorhanden(abstandRes);
+                      moveMotor ();
+                      delay(1000);
+                      z++;
+                      }
+                     
+                         if(abstandVorne()> 4 )
+                   {
+                    faehrtGeradeAus();
+                   }
+                   else
+                   {
+                    while(1)
+                    {
+                    stopMotor();
+                    }
+                   }
+
+
+                    
+                  }
+                  
+                  
+                  
+                  
+                  
+                  }
                 } // ende else
                  
               }
@@ -471,12 +556,14 @@ driftTime++;
               NACHHINTENGEKIPPT = true;
               if(KURVEABGESCHLOSSEN == false)
               {
-              setSpeedGeradeAusL();
+              setSpeedGeradeAusLT();
               }
               else
               {
                 EndeParcours = true;
               }
+
+              
               
               
               NACHVORNEGEKIPPT = false;
@@ -502,8 +589,8 @@ driftTime++;
               Serial.print(" ,ist nach vorne gekippt ");
               if(KURVEABGESCHLOSSEN == false)
               {
-            //nachVorneGekippt(); //*****************************************************************************************************************************
-            faehrtGeradeAus();
+            nachVorneGekippt(); //*****************************************************************************************************************************
+            //faehrtGeradeAus();
             treppeUeberwunden = true;
             NACHVORNEGEKIPPT = true;
             NACHHINTENGEKIPPT = false;
@@ -530,7 +617,7 @@ driftTime++;
                 {
                   Kurvenloop = true;
                   test++;
-                  delay(800);
+                  delay(1000);
                 }
                 
                 }

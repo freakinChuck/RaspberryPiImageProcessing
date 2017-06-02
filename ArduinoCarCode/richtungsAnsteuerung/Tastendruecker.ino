@@ -15,6 +15,8 @@ int abstandZwei = 315;
 int abstandEins = 375;
 int i=1;
 
+int sign = 1;
+
 Stepper myStepper(schritteProUmdrehung, 41, 42, 43, 44); // Initialisierung Stepper
 
 
@@ -56,25 +58,25 @@ pinMode(44,OUTPUT);
   void moveMotor (){
       switch (romanNumber){
     case 1: 
-        gerechneterAbstand = abstandEins-195-abstandVorhanden*10;
+        gerechneterAbstand = abstandEins-195-abstandVorhanden*10*sign;
         myStepper.step(calculateSteps(gerechneterAbstand));  // Je nach Parcourseite muss 155mm oder 65mm angepasst werden
     break;
     case 2:
-        gerechneterAbstand = abstandZwei-195-abstandVorhanden*10;
+        gerechneterAbstand = abstandZwei-195-abstandVorhanden*10*sign;
         myStepper.step(calculateSteps(gerechneterAbstand));  
 
     break;
     case 3:
-       gerechneterAbstand = abstandDrei-195-abstandVorhanden*10;
+       gerechneterAbstand = abstandDrei-195-abstandVorhanden*10*sign;
        myStepper.step(calculateSteps(gerechneterAbstand));  
 
     break;
     case 4:
-        gerechneterAbstand = abstandVier-105-abstandVorhanden*10;
+        gerechneterAbstand = abstandVier-105-abstandVorhanden*10*sign;
         myStepper.step(calculateSteps(gerechneterAbstand)); 
     break;
     case 5:
-       gerechneterAbstand = abstandFuenf-105-abstandVorhanden*10;
+       gerechneterAbstand = abstandFuenf-105-abstandVorhanden*10*sign;
        myStepper.step(calculateSteps(gerechneterAbstand));
   
     break;
@@ -104,5 +106,10 @@ pinMode(44,OUTPUT);
   digitalWrite(41,LOW);
 
 digitalWrite(43,LOW);
+ }
+
+ void setParcours()
+ {
+  sign = -1;
  }
 

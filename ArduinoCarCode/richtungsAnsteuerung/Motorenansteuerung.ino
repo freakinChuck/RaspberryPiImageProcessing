@@ -44,6 +44,12 @@ void setSpeedKurve()
   speedKurve = 100;
 }
 
+void setSpeedGeradeAusLT()
+{
+  speedGeradeAus = 50;
+}
+
+
 void setSpeedGeradeAusL()
 {
   speedGeradeAus = 150;
@@ -138,14 +144,13 @@ void nachHintenGekippt()
 
 void nachVorneGekippt()
 {
-                   analogWrite(in2, 5);
-                   digitalWrite(in1,LOW);
-                   analogWrite(in4, 255);
-                   digitalWrite(in3, LOW);
+                 analogWrite(in1, 30);
+                   digitalWrite(in2,LOW);
+                   analogWrite(in3, 30);
+                   digitalWrite(in4, LOW);
                 // set speed to 200 out of possible range 0~255
                   digitalWrite(enB, HIGH);
                   digitalWrite(enA, HIGH);
-                  //delay(250);
 }
 
 
