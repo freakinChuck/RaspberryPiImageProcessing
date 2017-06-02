@@ -35,10 +35,10 @@ public class GreenlightFinder {
             // Find Cirlces
             // -Settings
             Mat circles = new Mat();
-            int iCannyUpperThreshold = 40;
+            int iCannyUpperThreshold = 20;
             int iMinRadius = 10;
             int iMaxRadius = 20;
-            int iAccumulator = 20;
+            int iAccumulator = 10;
 
             //Find Circles with Hough algo.
             Imgproc.HoughCircles(green_hue_range, circles, Imgproc.CV_HOUGH_GRADIENT,
