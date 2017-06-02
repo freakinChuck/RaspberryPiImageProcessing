@@ -131,7 +131,7 @@ public class Application {
             //Rect belowRedLight = new Rect(redLightHeight.getRedXPos(), 0, frontCameraWidth-redLightHeight.getRedXPos(),frontCameraHeight);
             Rect belowRedLight = new Rect(0, 0, redLightHeight.getRedXPos(), frontCameraWidth);
 
-            while (!greenlightFinder.ImageContainsGreenLight(frontCamera.Capture())) {
+            while (!greenlightFinder.ImageContainsGreenLight(new Mat(frontCamera.Capture(), upperHalfOfImage))) {
                 System.out.println("waiting for Greenlight");
                 try {
                     Thread.sleep(100);
@@ -301,8 +301,8 @@ public class Application {
 
                 Thread.sleep(5000);
 
-                communication.SendNumber(4);
-                communication.DisplayNumber(4);
+                communication.SendNumber(3);
+                communication.DisplayNumber(3);
 
                 Thread.sleep(5000);
 
