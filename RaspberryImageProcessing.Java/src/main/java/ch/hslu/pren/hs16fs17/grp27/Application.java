@@ -17,9 +17,11 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
@@ -31,23 +33,39 @@ public class Application {
 
 
     static Calendar calendar = Calendar.getInstance();
-    static String currentDateAsString = String.format("%tY%te%td%tl%tm", calendar, calendar, calendar, calendar, calendar);
+    static SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd hh-mm-ss");
+    static String currentDateAsString = format1.format(calendar.getTime());
     public static String getFolderBaseBath(){
         return "/home/pi/Images/" + currentDateAsString;
 
     }
-
+    static PrintStream  out;
     public static void main(String[] args) throws InterruptedException, IOException {
+
+        out = System.out;
 
         String folderBasePath = getFolderBaseBath();
 
+        if (Files.notExists(Paths.get(folderBasePath))) {
+            new File(folderBasePath).mkdirs();
+        }
+
+        if (Configuration.DOPRINTTOFILE) {
+
+            File file = new File(getFolderBaseBath() + "/Log.txt" );
+            if (file.exists()) {
+                file.delete();
+                file.createNewFile();
+            }
+            out = new PrintStream(file);
+        }
 
         try {
 
             GpioCommunication communication;
 
             if (Configuration.DOCOMMUNICATION && Configuration.DOWAITFORARDUINO) {
-                System.out.println("Waiting for Arduino");
+                out.println("Waiting for Arduino");
 
                 communication = new GpioCommunication();
                 communication.ClearPinData();
@@ -59,7 +77,7 @@ public class Application {
                 communication.ClearPinData();
                 communication.InitiateWaitState();
 
-                System.out.println("Arduino Ready");
+                out.println("Arduino Ready");
 
             }
             else if (Configuration.DOCOMMUNICATION) {
@@ -67,7 +85,7 @@ public class Application {
                 communication.ClearPinData();
                 communication.InitiateWaitState();
 
-                System.out.println("ArduinoWait Deactivated");
+                out.println("ArduinoWait Deactivated");
 
             }
 
@@ -85,17 +103,17 @@ public class Application {
             int count = 0;
             while (!frontCamera.Available() && count++ < 20) {
                 Thread.sleep(250);
-                System.out.println("Camera not Available");
+                out.println("Camera not Available");
 
             }
 
             if (!frontCamera.Available()) {
-                System.out.println("TILT.....");
+                out.println("TILT.....");
                 if (Configuration.DOCOMMUNICATION)
                     communication.DisplayTilt();
                 Thread.sleep(2000);
 
-                System.out.println("Shutdown initiated....");
+                out.println("Shutdown initiated....");
                 if (Configuration.DOCOMMUNICATION)
                     communication.ClearPinData();
                 return;
@@ -105,17 +123,13 @@ public class Application {
             frontCameraWidth = frontCamera.Capture().width();
             frontCameraHeight = frontCamera.Capture().height();
 
-            if (Files.notExists(Paths.get(folderBasePath))) {
-                new File(folderBasePath).mkdirs();
-            }
-
 
             if (Configuration.DOCOMMUNICATION)
                 communication.DisplayRedlightWait();
 
             Rect upperHalfOfImage = new Rect(0, frontCameraHeight / 3, frontCameraWidth, frontCameraHeight / 3 * 2);
             while (!redLightHeight.FindRedLightHeight(new Mat(frontCamera.Capture(), upperHalfOfImage))) {
-                System.out.println("waiting for Redlight");
+                out.println("waiting for Redlight");
                 try {
                     Thread.sleep(100);
                 }
@@ -124,7 +138,7 @@ public class Application {
             }
 
 
-            System.out.println("Redlight found at: " + redLightHeight.getRedXPos());
+            out.println("Redlight found at: " + redLightHeight.getRedXPos());
             if (Configuration.DOCOMMUNICATION)
                 communication.DisplayGreenlightWait();
 
@@ -132,7 +146,7 @@ public class Application {
             Rect belowRedLight = new Rect(0, 0, redLightHeight.getRedXPos(), frontCameraWidth);
 
             while (!greenlightFinder.ImageContainsGreenLight(new Mat(frontCamera.Capture(), upperHalfOfImage))) {
-                System.out.println("waiting for Greenlight");
+                out.println("waiting for Greenlight");
                 try {
                     Thread.sleep(100);
                 }
@@ -163,7 +177,7 @@ public class Application {
 
             Camera sideCamera = new Camera(Configuration.SIDECAMERAINDEX);
 
-            System.out.println("Starting Number Recognition");
+            out.println("Starting Number Recognition");
             List<Future<Integer>> processList = new ArrayList<>();
             List<Integer> intList = new ArrayList<>();
 
@@ -177,7 +191,7 @@ public class Application {
                 Mat capturedImage = sideCamera.Capture();
                 Image foundImage = redBarFinder.FindRedDoubleBar(capturedImage, 0);
                 if (foundImage != null) {
-                    System.out.println("Redbar found");
+                    out.println("Redbar found");
                     redBarImages[0] = foundImage;
                 }
                 System.gc();
@@ -185,7 +199,7 @@ public class Application {
 
             Mat[] matrixesToEvaluate = new Mat[numberOfImagesToTake - 1];
             for (int i = 0; i < matrixesToEvaluate.length; i++) {
-                System.out.println("Picture taken" + i);
+                out.println("Picture taken" + i);
                 matrixesToEvaluate[i] = sideCamera.Capture();
             }
 
@@ -195,10 +209,10 @@ public class Application {
             for (int i = 0; i < matrixesToEvaluate.length; i++) {
                 redBarImages[i + 1] = redBarFinder.FindRedDoubleBar(matrixesToEvaluate[i], i);
                 if (redBarImages[i + 1] != null) {
-                    System.out.println("RedbarFound Picture" + i);
+                    out.println("RedbarFound Picture" + i);
                 }
                 else {
-                    System.out.println("RedbarFailed Picture" + i);
+                    out.println("RedbarFailed Picture" + i);
                 }
             }
 
@@ -219,7 +233,7 @@ public class Application {
 
             for (Future<Integer> future : processList) {
                 try {
-                    System.out.println("Erkennte Zahl: " + future.get());
+                    out.println("Erkennte Zahl: " + future.get());
                 }
                 catch (Exception ex) {
                     ex.printStackTrace();
@@ -257,7 +271,7 @@ public class Application {
             }
 
 
-            System.out.println("Number " + maxKey + " found");
+            out.println("Number " + maxKey + " found");
 
             if (Configuration.DOCOMMUNICATION) {
 
@@ -265,7 +279,7 @@ public class Application {
                 communication.SendNumber(maxKey);
             }
 
-            System.out.println("Number " + maxKey + " sent to Arduino");
+            out.println("Number " + maxKey + " sent to Arduino");
 
 
             PrintNumberInConsole(maxKey, maxNumbers, objects.length);
@@ -279,7 +293,7 @@ public class Application {
                     File outputfile = new File(folderBasePath + "/" + "Original" + String.format("%03d", i) + ".png");
                     try {
                         ImageIO.write(matToBufImg.getBufferedImage(), "png", outputfile);
-                        System.out.println("Wrote File: " + outputfile.getAbsolutePath());
+                        out.println("Wrote File: " + outputfile.getAbsolutePath());
 
                     }
                     catch (IOException e) {
@@ -287,10 +301,10 @@ public class Application {
                     }
 
                 }
-                System.out.println("File write done");
+                out.println("File write done");
             }
 
-            Thread.sleep(10000);
+            Thread.sleep(60000);
 
         }
         catch (Exception exc) {
@@ -304,8 +318,6 @@ public class Application {
                 communication.SendNumber(3);
                 communication.DisplayNumber(3);
 
-                Thread.sleep(5000);
-
             }
 
             File outputfile = new File(folderBasePath + "/" + "Error.txt");
@@ -314,12 +326,16 @@ public class Application {
                 outputfile.createNewFile();
             }
 
-            PrintWriter out = new PrintWriter(outputfile);
+            out.println("***************************************************");
+
             out.print("Exception of Type: ");
             out.println(exc.getClass().getName());
             out.println(exc.getMessage());
             out.println();
             exc.printStackTrace(out);
+
+            Thread.sleep(5000);
+
 
             throw exc;
         }
@@ -331,7 +347,7 @@ public class Application {
 
     public static void PrintNumberInConsole(int number, long numbersFound, long totalAmountOfPicturesTaken){
         switch(number){
-            case 1: System.out.println( " __  \n" +
+            case 1: out.println( " __  \n" +
                     "|  | \n" +
                     "|  | \n" +
                     "|  | \n" +
@@ -340,7 +356,7 @@ public class Application {
                     "     ");
                 break;
 
-            case 2: System.out.println( " __   __  \n" +
+            case 2: out.println( " __   __  \n" +
                     "|  | |  | \n" +
                     "|  | |  | \n" +
                     "|  | |  | \n" +
@@ -349,7 +365,7 @@ public class Application {
                     "          ");
                 break;
 
-            case 3: System.out.println( " __   __   __  \n" +
+            case 3: out.println( " __   __   __  \n" +
                     "|  | |  | |  | \n" +
                     "|  | |  | |  | \n" +
                     "|  | |  | |  | \n" +
@@ -358,7 +374,7 @@ public class Application {
                     "               ");
                 break;
 
-            case 4: System.out.println(" __  ____    ____ \n" +
+            case 4: out.println(" __  ____    ____ \n" +
                     "|  | \\   \\  /   / \n" +
                     "|  |  \\   \\/   /  \n" +
                     "|  |   \\      /   \n" +
@@ -367,7 +383,7 @@ public class Application {
                     "                  ");
                 break;
 
-            case 5: System.out.println( "____    ____ \n" +
+            case 5: out.println( "____    ____ \n" +
                     "\\   \\  /   / \n" +
                     " \\   \\/   /  \n" +
                     "  \\      /   \n" +
@@ -376,10 +392,10 @@ public class Application {
                     "             ");
                 break;
 
-            default: System.out.println("Couldn't find Character");
+            default: out.println("Couldn't find Character");
                 break;
         }
-        System.out.println("Precision: " + ((float)numbersFound/totalAmountOfPicturesTaken*100) + "%");
+        out.println("Precision: " + ((float)numbersFound/totalAmountOfPicturesTaken*100) + "%");
     }
 
 }

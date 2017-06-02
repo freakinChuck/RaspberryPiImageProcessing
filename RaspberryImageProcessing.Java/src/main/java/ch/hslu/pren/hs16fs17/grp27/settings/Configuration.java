@@ -29,9 +29,11 @@ public class Configuration {
     public static final Pin DISPLAYBOTTOMLEFTPIN = RaspiPin.GPIO_25;
     public static final Pin DISPLAYBOTTOMRIGHTPIN = RaspiPin.GPIO_23;
 
-    public static final boolean DOTAKEIMAGES = false;
+    public static final boolean DOTAKEIMAGES = true;
     public static final boolean DOCOMMUNICATION = true;
 
     public static final boolean DOWAITFORARDUINO = true;
+
+    public static final boolean DOPRINTTOFILE = true;
 
 }
