@@ -27,6 +27,8 @@ boolean offsetDone = false;
 boolean startOffset = false;
 boolean hasAlreadyHitThe179er = false;
 
+boolean korrekturDone = false;
+
  float yaw12 = 0;
  int antiDrift = 0;
  int driftTime = 0;
@@ -37,6 +39,12 @@ int antiDrift2 = 0;
  int antiDcount2 = 0;
  
  int motorBlockiert = 1;
+
+ float aktuellerYAW = 0;
+ float myKorrekturWinkel = 0;
+ int korrektur = 0;
+ int durchlaufK = 0;
+ boolean korrekturIn = false;
 
 
 
@@ -49,6 +57,8 @@ int myPITCHOffset = 0;
 int startKurveOffset = 0;
 int test = 0;
 int parcoursInfo = 0;
+
+int korrekturFertig = 0;
 
 int driftOffset = 3.5;
 
@@ -137,7 +147,7 @@ if(motorBlockiert == 1)
 }
 else
 {
-  loeseMotor();
+  //loeseMotor();
 }
   
   if(parcours == 1)
@@ -293,6 +303,7 @@ driftTime++;
                  /* if( abstandHintenRechts()>20 )
                   {
 
+<<<<<<< HEAD
                     setParcours();
                     
                      for(;absCnt < 10;absCnt++)
@@ -312,6 +323,57 @@ driftTime++;
                       if(z == 0)
                       {
                      setAbstandVorhanden(abstandRes);
+=======
+                    
+                    motorBlockiert = 0;
+                   // loeseMotor();
+                    if(parcours == 0)
+                    {
+
+
+                    
+                  /* if(korrektur == 0)
+                   {
+                    myKorrekturWinkel = ausrichtungParcoursRechts();
+                    if(myKorrekturWinkel < 0)
+                    {
+                      
+                    aktuellerYAW = getYAW();
+
+                    while(getYAW() < (aktuellerYAW - myKorrekturWinkel))
+                    {
+                      fahreKurveNachLinks();
+                    }
+                    
+                    }
+                    
+                    else
+                    {
+                      aktuellerYAW = getYAW();
+                      while(getYAW() < (aktuellerYAW + myKorrekturWinkel))
+                      {
+                         fahreKurveNachRechts();
+                      }
+                      
+                    }
+                    korrektur++;
+                    
+                   }*/
+
+
+                    
+
+
+
+
+
+
+
+
+
+                      
+                     setAbstandVorhanden(abstandVorneRechts());
+>>>>>>> c2ba7570cbb66c44cec27ed6eabbeffb7e6e408c
                       moveMotor ();
                       delay(1000);
                       z++;
@@ -400,13 +462,40 @@ driftTime++;
                 }
                 else
                 {
-                 if(parcours == 0 && abstandHintenLinks()>20  ||  parcours == 1 && abstandHintenRechts()>20 )      //*************************hier änderung für parcours wahl
+                 if(parcours == 0 && abstandHintenLinks()>20  ||  parcours == 1 && abstandHintenRechts()>20 || korrekturIn == false)      //*************************hier änderung für parcours wahl
                   {
                     motorBlockiert = 0;
-                   // loeseMotor();
-                    if(parcours==0)
+                  
+                   if(korrekturFertig == 0)
+                   {
+
+                      //stopMotor();
+                       if(durchlaufK == 0)
+                      {
+                      aktuellerYAW = getYAW();
+                        myKorrekturWinkel = ausrichtungParcoursRechts();
+                      }
+                      
+                      durchlaufK++;
+                    
+                  
+
+                     
+                    if(myKorrekturWinkel < 0)
                     {
                       
+<<<<<<< HEAD
+=======
+                     
+
+                    if(yaw < (aktuellerYAW - myKorrekturWinkel))
+                    {
+                      fahreKurveNachLinks();
+                    }
+                    else
+                    {
+<<<<<<< HEAD
+>>>>>>> c2ba7570cbb66c44cec27ed6eabbeffb7e6e408c
                      for(;absCnt < 10;absCnt++)
                      {
 
@@ -424,6 +513,34 @@ driftTime++;
                       if(z == 0)
                       {
                      setAbstandVorhanden(abstandRes);
+=======
+                    stopMotor();
+                   
+                    korrekturFertig = 1;
+                    }
+                    }
+                    
+                    else
+                    {
+                      
+                      if(yaw < (aktuellerYAW + myKorrekturWinkel))
+                      {
+                         fahreKurveNachRechts();
+                      }
+                      else
+                      {
+                      stopMotor();
+                     
+                      korrekturFertig = 1;
+                      }
+                      
+                    }
+                   }
+                   else
+                   {
+                        
+                     setAbstandVorhanden(abstandVorneRechts());
+>>>>>>> f38ccfd40de1b51193e1ea90301621cf11fe0f99
                       moveMotor ();
                       delay(1000);
                       z++;
@@ -438,6 +555,7 @@ driftTime++;
                     while(1)
                     {
                     stopMotor();
+                     korrekturIn = true;
                     }
                    }
                    
@@ -484,6 +602,7 @@ driftTime++;
                     }
                    }
 
+<<<<<<< HEAD
 
                     
                   }
@@ -493,6 +612,32 @@ driftTime++;
                   
                   
                   }
+=======
+                   }
+                  }
+                   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                  
+
+
+
+                   
+
+                  
+>>>>>>> c2ba7570cbb66c44cec27ed6eabbeffb7e6e408c
                 } // ende else
                  
               }
