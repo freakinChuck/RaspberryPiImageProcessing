@@ -303,6 +303,9 @@ public class Application {
 
                 communication.SendNumber(4);
                 communication.DisplayNumber(4);
+
+                Thread.sleep(5000);
+
             }
 
             File outputfile = new File(folderBasePath + "/" + "Error.txt");
@@ -315,6 +318,7 @@ public class Application {
             out.print("Exception of Type: ");
             out.println(exc.getClass().getName());
             out.println(exc.getMessage());
+            out.println();
             exc.printStackTrace(out);
 
             throw exc;
