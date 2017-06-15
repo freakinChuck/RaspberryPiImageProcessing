@@ -1,10 +1,10 @@
 package ch.hslu.pren.hs16fs17.grp27;
 
-import ch.hslu.pren.hs16fs17.grp27.imageprocessing.helper.Image;
 import ch.hslu.pren.hs16fs17.grp27.imageprocessing.GreenlightFinder;
-import ch.hslu.pren.hs16fs17.grp27.imageprocessing.RedLightHeight;
 import ch.hslu.pren.hs16fs17.grp27.imageprocessing.RedBarFinder;
+import ch.hslu.pren.hs16fs17.grp27.imageprocessing.RedLightHeight;
 import ch.hslu.pren.hs16fs17.grp27.imageprocessing.RomanCharacterFinder;
+import ch.hslu.pren.hs16fs17.grp27.imageprocessing.helper.Image;
 import ch.hslu.pren.hs16fs17.grp27.imageprocessing.helper.MatToBufImg;
 import ch.hslu.pren.hs16fs17.grp27.intercomm.GpioCommunication;
 import ch.hslu.pren.hs16fs17.grp27.io.Camera;
@@ -12,13 +12,12 @@ import ch.hslu.pren.hs16fs17.grp27.settings.Configuration;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
+import java.sql.Timestamp;
 
 import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
@@ -127,11 +126,11 @@ public class Application {
             if (Configuration.DOCOMMUNICATION)
                 communication.DisplayRedlightWait();
 
-            Rect upperHalfOfImage = new Rect(0, frontCameraHeight / 3, frontCameraWidth, frontCameraHeight / 3 * 2);
+            Rect upperHalfOfImage = new Rect(0, 0 , frontCameraWidth *3 / 5, frontCameraHeight *3 /5);
             while (!redLightHeight.FindRedLightHeight(new Mat(frontCamera.Capture(), upperHalfOfImage))) {
                 out.println("waiting for Redlight");
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(250);
                 }
                 catch (InterruptedException e) {
                 }
@@ -144,11 +143,13 @@ public class Application {
 
             //Rect belowRedLight = new Rect(redLightHeight.getRedXPos(), 0, frontCameraWidth-redLightHeight.getRedXPos(),frontCameraHeight);
             Rect belowRedLight = new Rect(0, 0, redLightHeight.getRedXPos(), frontCameraWidth);
+            long timesafty = System.currentTimeMillis() + 30000;
+            //timesafty 30 sek green
 
-            while (!greenlightFinder.ImageContainsGreenLight(new Mat(frontCamera.Capture(), upperHalfOfImage))) {
-                out.println("waiting for Greenlight");
+            while (timesafty < System.currentTimeMillis() || !greenlightFinder.ImageContainsGreenLight(new Mat(frontCamera.Capture(), upperHalfOfImage))) {
+                out.println("waiting for Greenlight " + timesafty + " < " +  System.currentTimeMillis());
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(250);
                 }
                 catch (InterruptedException e) {
 
@@ -163,7 +164,7 @@ public class Application {
                 communication.DisplayGo();
 
             if (Configuration.DOCOMMUNICATION)
-                communication.SendStartSignal();
+              //  communication.SendStartSignal();
 
             System.out.println("Start Signal sent to Arduino");
 

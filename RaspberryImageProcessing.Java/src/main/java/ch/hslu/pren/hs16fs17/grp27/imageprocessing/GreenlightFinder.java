@@ -28,21 +28,21 @@ public class GreenlightFinder {
             Mat green_hue_range = new Mat();
             //Set Green range
             int sensitivity = 20;
-            Core.inRange(hsv_image, new Scalar(60 - sensitivity, 120, 120), new Scalar(60 + sensitivity, 255, 240), green_hue_range);
+            Core.inRange(hsv_image, new Scalar(40, 95, 75), new Scalar(85, 255, 255), green_hue_range);
             //Slightly blur the image. Improves false-positiv circle detection
             Imgproc.GaussianBlur(green_hue_range, green_hue_range, new Size(9, 9), 2, 2);
 
             // Find Cirlces
             // -Settings
             Mat circles = new Mat();
-            int iCannyUpperThreshold = 20;
+            int iCannyUpperThreshold = 10;
             int iMinRadius = 10;
             int iMaxRadius = 20;
             int iAccumulator = 10;
 
             //Find Circles with Hough algo.
             Imgproc.HoughCircles(green_hue_range, circles, Imgproc.CV_HOUGH_GRADIENT,
-                    1.0, green_hue_range.rows(), iCannyUpperThreshold, iAccumulator,
+                    1.0, green_hue_range.rows()/8, iCannyUpperThreshold, iAccumulator,
                     iMinRadius, iMaxRadius);
             if (circles.cols() > 0) {
                 for (int x = 0; x < circles.cols(); x++) {
