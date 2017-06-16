@@ -164,7 +164,7 @@ public class Application {
                 communication.DisplayGo();
 
             if (Configuration.DOCOMMUNICATION)
-              //  communication.SendStartSignal();
+                communication.SendStartSignal();
 
             System.out.println("Start Signal sent to Arduino");
 
