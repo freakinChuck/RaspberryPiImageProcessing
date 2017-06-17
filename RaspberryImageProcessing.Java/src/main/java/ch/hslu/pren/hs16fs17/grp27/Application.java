@@ -126,7 +126,7 @@ public class Application {
             if (Configuration.DOCOMMUNICATION)
                 communication.DisplayRedlightWait();
 
-            Rect upperHalfOfImage = new Rect(0, 0 , frontCameraWidth *3 / 5, frontCameraHeight *3 /5);
+            Rect upperHalfOfImage = new Rect(0, 50 , frontCameraWidth *3 / 5, frontCameraHeight *3 /5);
             while (!redLightHeight.FindRedLightHeight(new Mat(frontCamera.Capture(), upperHalfOfImage))) {
                 out.println("waiting for Redlight");
                 try {
@@ -184,7 +184,7 @@ public class Application {
 
             boolean redBarFound = false;
 
-            final int numberOfImagesToTake = 8;
+            final int numberOfImagesToTake = 12;
 
             Image[] redBarImages = new Image[numberOfImagesToTake];
 
@@ -270,7 +270,9 @@ public class Application {
                     maxNumbers = currentCount;
                 }
             }
+            if(maxNumbers == 0){
 
+            }
 
             out.println("Number " + maxKey + " found");
 

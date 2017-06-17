@@ -34,6 +34,6 @@ public class Configuration {
 
     public static final boolean DOWAITFORARDUINO = true;
 
-    public static final boolean DOPRINTTOFILE = true;
+    public static final boolean DOPRINTTOFILE = false;
 
 }

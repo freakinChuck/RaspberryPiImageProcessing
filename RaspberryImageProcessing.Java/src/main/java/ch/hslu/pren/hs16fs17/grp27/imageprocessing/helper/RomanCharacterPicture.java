@@ -4,7 +4,6 @@ package ch.hslu.pren.hs16fs17.grp27.imageprocessing.helper;
 import ch.hslu.pren.hs16fs17.grp27.Application;
 import ch.hslu.pren.hs16fs17.grp27.settings.Configuration;
 import net.sourceforge.tess4j.ITesseract;
-import net.sourceforge.tess4j.Tesseract;
 import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
 
@@ -53,7 +52,7 @@ public class RomanCharacterPicture {
             Mat upper_black_hue_range = new Mat();
 
             Core.inRange(hsv_image, new Scalar(0,0,0), new Scalar(180, 255, 50), lower_black_hue_range);
-            Core.inRange(hsv_image, new Scalar(0, 0, 20), new Scalar(180, 255, 100), upper_black_hue_range);
+            Core.inRange(hsv_image, new Scalar(0, 0, 20), new Scalar(180, 255, 120), upper_black_hue_range);
 
             Mat black_hue_image = new Mat();
             Core.addWeighted(lower_black_hue_range, 1.0, upper_black_hue_range, 1.0, 0.0, black_hue_image);
@@ -61,6 +60,7 @@ public class RomanCharacterPicture {
 
             //Invert black to white
             Mat white_hue_image = new Mat();
+
             Core.bitwise_not(black_hue_image, white_hue_image);
             MatToBufImg whiteImageBuff = new MatToBufImg();
 
@@ -126,16 +126,16 @@ public class RomanCharacterPicture {
             }
             int counter = 0;
             counter = (forEachCharI+forEachCharV);
-            //System.out.println("All chars:" + result + " --> " + counter + "\n");
+            System.out.println("All chars:" + result + " --> " + counter + "\n");
             if(Configuration.DOTAKEIMAGES) {
                 MatToBufImg matToBufImg = new MatToBufImg();
-                matToBufImg.setMatrix(white_hue_image, ".png");
+                matToBufImg.setMatrix(white_hue_image, ".jpg");
 
                 String folderBasePath = Application.getFolderBaseBath();
 
-                File outputfile = new File(folderBasePath + "/" + "Number" + String.format("%03d", index) + ".png");
+                File outputfile = new File(folderBasePath + "/" + "Number" + String.format("%03d", index) + ".jpg");
                 try {
-                    ImageIO.write(matToBufImg.getBufferedImage(), "png", outputfile);
+                    ImageIO.write(matToBufImg.getBufferedImage(), "jpg", outputfile);
                     System.out.println("Wrote File: " + outputfile.getAbsolutePath());
 
                 } catch (IOException e) {

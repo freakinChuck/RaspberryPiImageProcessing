@@ -21,6 +21,7 @@ public class TesseractInstance {
         singletonTesseract = new Tesseract();
         singletonTesseract.setDatapath(System.getenv("TESSDATA_PREFIX"));
         //singletonTesseract.setTessVariable("tessedit_char_whitelist", "IV"); //--Works sometimes
+        //singletonTesseract.setTessVariable("tessedit_char_blacklist", ".,;:"); //--Works sometimes
         singletonTesseract.setPageSegMode(ITessAPI.TessPageSegMode.PSM_SINGLE_WORD);
     }
 
