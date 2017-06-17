@@ -271,7 +271,8 @@ public class Application {
                 }
             }
             if(maxNumbers == 0){
-
+                maxKey =(int)(Math.random() * 5) +1; //If no nummbers found, get a random one
+                out.println( "random number generated");
             }
 
             out.println("Number " + maxKey + " found");
