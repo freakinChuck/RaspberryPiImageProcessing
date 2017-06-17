@@ -2,6 +2,7 @@ package ch.hslu.pren.hs16fs17.grp27.imageprocessing.helper;
 
 
 import ch.hslu.pren.hs16fs17.grp27.Application;
+import ch.hslu.pren.hs16fs17.grp27.settings.Configuration;
 import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract;
 import org.opencv.core.*;
@@ -126,21 +127,21 @@ public class RomanCharacterPicture {
             int counter = 0;
             counter = (forEachCharI+forEachCharV);
             //System.out.println("All chars:" + result + " --> " + counter + "\n");
+            if(Configuration.DOTAKEIMAGES) {
+                MatToBufImg matToBufImg = new MatToBufImg();
+                matToBufImg.setMatrix(white_hue_image, ".png");
 
-            MatToBufImg matToBufImg = new MatToBufImg();
-            matToBufImg.setMatrix(white_hue_image, ".png");
+                String folderBasePath = Application.getFolderBaseBath();
 
-            String folderBasePath = Application.getFolderBaseBath();
+                File outputfile = new File(folderBasePath + "/" + "Number" + String.format("%03d", index) + ".png");
+                try {
+                    ImageIO.write(matToBufImg.getBufferedImage(), "png", outputfile);
+                    System.out.println("Wrote File: " + outputfile.getAbsolutePath());
 
-            File outputfile = new File(folderBasePath + "/" + "Number"+ String.format("%03d", index) +".png");
-            try {
-                ImageIO.write(matToBufImg.getBufferedImage(), "png", outputfile);
-                System.out.println("Wrote File: " + outputfile.getAbsolutePath());
-
-            } catch (IOException e) {
-                e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-
             return(counter);
         }catch(Exception ex){
             System.err.println(ex.toString());

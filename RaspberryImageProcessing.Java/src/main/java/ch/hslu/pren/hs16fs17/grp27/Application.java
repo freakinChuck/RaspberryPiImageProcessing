@@ -146,7 +146,7 @@ public class Application {
             long timesafty = System.currentTimeMillis() + 30000;
             //timesafty 30 sek green
 
-            while (timesafty < System.currentTimeMillis() || !greenlightFinder.ImageContainsGreenLight(new Mat(frontCamera.Capture(), upperHalfOfImage))) {
+            while (timesafty > System.currentTimeMillis() && !greenlightFinder.ImageContainsGreenLight(new Mat(frontCamera.Capture(), upperHalfOfImage))) {
                 out.println("waiting for Greenlight " + timesafty + " < " +  System.currentTimeMillis());
                 try {
                     Thread.sleep(250);
@@ -184,7 +184,7 @@ public class Application {
 
             boolean redBarFound = false;
 
-            final int numberOfImagesToTake = 12;
+            final int numberOfImagesToTake = 8;
 
             Image[] redBarImages = new Image[numberOfImagesToTake];
 
