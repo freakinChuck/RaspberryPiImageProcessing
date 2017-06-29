@@ -143,7 +143,7 @@ public class Application {
 
             //Rect belowRedLight = new Rect(redLightHeight.getRedXPos(), 0, frontCameraWidth-redLightHeight.getRedXPos(),frontCameraHeight);
             Rect belowRedLight = new Rect(0, 0, redLightHeight.getRedXPos(), frontCameraWidth);
-            long timesafty = System.currentTimeMillis() + 30000;
+            long timesafty = System.currentTimeMillis() + 60000;
             //timesafty 30 sek green
 
             while (timesafty > System.currentTimeMillis() && !greenlightFinder.ImageContainsGreenLight(new Mat(frontCamera.Capture(), upperHalfOfImage))) {
