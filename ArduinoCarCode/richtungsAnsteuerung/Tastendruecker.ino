@@ -59,10 +59,38 @@ pinMode(44,OUTPUT);
       switch (romanNumber){
     case 1: 
         gerechneterAbstand = abstandEins-195-abstandVorhanden*10*sign;
-        myStepper.step(calculateSteps(gerechneterAbstand));  // Je nach Parcourseite muss 155mm oder 65mm angepasst werden
+        myStepper.step(calculateSteps(-gerechneterAbstand));  // Je nach Parcourseite muss 155mm oder 65mm angepasst werden
     break;
     case 2:
         gerechneterAbstand = abstandZwei-195-abstandVorhanden*10*sign;
+        myStepper.step(calculateSteps(-gerechneterAbstand));  
+
+    break;
+    case 3:
+       gerechneterAbstand = abstandDrei-195-abstandVorhanden*10*sign;
+       myStepper.step(calculateSteps(-gerechneterAbstand));  
+
+    break;
+    case 4:
+        gerechneterAbstand = abstandVier-105-abstandVorhanden*10*sign;
+        myStepper.step(calculateSteps(-gerechneterAbstand)); 
+    break;
+    case 5:
+       gerechneterAbstand = abstandFuenf-105-abstandVorhanden*10*sign;
+       myStepper.step(calculateSteps(-gerechneterAbstand));
+  
+    break;
+    delay(4000);
+    }}
+    
+void moveMotorleft (){
+      switch (romanNumber){
+    case 1: 
+        gerechneterAbstand = abstandFuenf-195-abstandVorhanden*10*sign;
+        myStepper.step(calculateSteps(gerechneterAbstand));  // Je nach Parcourseite muss 155mm oder 65mm angepasst werden
+    break;
+    case 2:
+        gerechneterAbstand = abstandVier-195-abstandVorhanden*10*sign;
         myStepper.step(calculateSteps(gerechneterAbstand));  
 
     break;
@@ -72,11 +100,11 @@ pinMode(44,OUTPUT);
 
     break;
     case 4:
-        gerechneterAbstand = abstandVier-105-abstandVorhanden*10*sign;
+        gerechneterAbstand = abstandZwei-105-abstandVorhanden*10*sign;
         myStepper.step(calculateSteps(gerechneterAbstand)); 
     break;
     case 5:
-       gerechneterAbstand = abstandFuenf-105-abstandVorhanden*10*sign;
+       gerechneterAbstand = abstandEins-105-abstandVorhanden*10*sign;
        myStepper.step(calculateSteps(gerechneterAbstand));
   
     break;
